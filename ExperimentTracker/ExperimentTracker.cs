@@ -25,6 +25,24 @@ namespace ExperimentTracker
         private Texture2D onActive;
         private Texture2D onInactive;
 
+        /** GUI stuff */
+        private Rect windowRect = new Rect(0, 0, 1, 1);
+        private int windowID = new System.Random().Next(int.MaxValue);
+
+        private void OnGUI()
+        {
+            windowRect = GUILayout.Window(windowID, windowRect, OnWindow, "ExperimentTracker");
+        }
+
+        private void OnWindow(int id)
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("This is a label");
+            GUILayout.EndHorizontal();
+
+            GUI.DragWindow();
+        }
+
         /** Called once at startup */
         public void Awake()
         {
@@ -34,6 +52,13 @@ namespace ExperimentTracker
             PluginConfiguration config = PluginConfiguration.CreateForType<ExperimentTracker>();
             config.load();
             isActive = config.GetValue<bool>("isActive");
+            windowRect.x = config.GetValue<int>("windowRectX");
+            windowRect.y = config.GetValue<int>("windowRectY");
+            if ((windowRect.x == 0) && (windowRect.y == 0))
+            {
+                windowRect.x = Screen.width * 0.35f;
+                windowRect.y = Screen.height * 0.1f;
+            }
 
             /** Load textures */
             onActive = loadTexture("ExperimentTracker/icons/ET_active");
@@ -51,6 +76,8 @@ namespace ExperimentTracker
             /** Save to config */
             PluginConfiguration config = PluginConfiguration.CreateForType<ExperimentTracker>();
             config.SetValue("isActive", isActive);
+            config.SetValue("windowRectX", windowRect.x);
+            config.SetValue("windowRectY", windowRect.y);
             config.save();
 
             /** Unregister for events */
