@@ -52,6 +52,7 @@ namespace ExperimentTracker
             windowRect.y = windowRect.y + windowRect.height >= Screen.height ? (Screen.height - 1) - windowRect.height : windowRect.y;
         }
 
+        /** Called every frame */
         private void OnWindow(int id)
         {
             if (isActive)
@@ -66,6 +67,30 @@ namespace ExperimentTracker
                 }
                 GUI.DragWindow();
             }
+        }
+
+        public void FixedUpdate()
+        {
+            
+        }
+
+        /** Gets all science experiments */
+        private List<ModuleScienceExperiment> getExperiments()
+        {
+            return FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleScienceExperiment>();
+        }
+
+        /** Gets the science container to store all science data */
+        private ModuleScienceContainer getScienceContainer()
+        {
+            return FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleScienceContainer>().FirstOrDefault();
+        }
+
+        /** Checks if there is a scientist on board to rerun experiments */
+        {
+            foreach (ProtoCrewMember m in curVessel.GetVesselCrew())
+                if (m.experienceTrait.Title == "Scientist") return true;
+            return false;
         }
 
         /** Called once at startup */
@@ -89,6 +114,7 @@ namespace ExperimentTracker
             GameEvents.onGUIApplicationLauncherReady.Add(setupButton);
         }
 
+        /** Called after Awake */
         public void Start()
         {
             debugPrint("Start()");
