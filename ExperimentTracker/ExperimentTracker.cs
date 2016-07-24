@@ -22,6 +22,7 @@ namespace ExperimentTracker
         /** Used variables */
         private static ApplicationLauncherButton etButton;
         private bool isActive;
+        private bool nothingToDo = true;
         private Texture2D onActive;
         private Texture2D onInactive;
 
@@ -54,10 +55,12 @@ namespace ExperimentTracker
         {
             if (isActive)
             {
-                GUILayout.BeginHorizontal();
-                GUILayout.Label("This is a label");
-                GUILayout.EndHorizontal();
-
+                if (nothingToDo)
+                {
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label("There are no possible experiments yet");
+                    GUILayout.EndHorizontal();
+                }
                 GUI.DragWindow();
             }
         }
