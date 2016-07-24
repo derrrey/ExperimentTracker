@@ -107,8 +107,8 @@ namespace ExperimentTracker
             windowRect.y = config.GetValue<int>("windowRectY");
             if ((windowRect.x == 0) && (windowRect.y == 0))
             {
-                windowRect.x = Screen.width * 0.35f;
-                windowRect.y = Screen.height * 0.1f;
+                windowRect.x = Screen.width * 0.2f;
+                windowRect.y = 0;
             }
 
             /** Register for events */
