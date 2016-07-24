@@ -26,7 +26,9 @@ namespace ExperimentTracker
         private Texture2D onInactive;
 
         /** GUI stuff */
-        private Rect windowRect = new Rect(0, 0, 1, 1);
+        private Rect windowRect = new Rect();
+        float windowHeight = 50;
+        float windowWidth = 400;
         private int windowID = new System.Random().Next(int.MaxValue);
 
         private void OnGUI()
@@ -35,6 +37,8 @@ namespace ExperimentTracker
             {
                 clampToScreen();
                 windowRect = GUILayout.Window(windowID, windowRect, OnWindow, "ExperimentTracker");
+                windowRect.width = windowWidth;
+                windowRect.height = windowHeight;
             }
         }
 
