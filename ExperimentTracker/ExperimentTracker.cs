@@ -41,8 +41,6 @@ namespace ExperimentTracker
             {
                 clampToScreen();
                 windowRect = GUILayout.Window(windowID, windowRect, OnWindow, "ExperimentTracker");
-                windowRect.width = windowWidth;
-                windowRect.height = windowHeight;
             }
         }
 
@@ -60,6 +58,8 @@ namespace ExperimentTracker
             {
                 if (nothingToDo)
                 {
+                    windowRect.width = windowWidth;
+                    windowRect.height = windowHeight;
                     GUILayout.BeginHorizontal();
                     GUILayout.Label("There are no possible experiments yet");
                     GUILayout.EndHorizontal();
@@ -77,8 +77,8 @@ namespace ExperimentTracker
             PluginConfiguration config = PluginConfiguration.CreateForType<ExperimentTracker>();
             config.load();
             isActive = config.GetValue<bool>("isActive");
-            windowRect.x = config.GetValue<int>("windowRectX");
-            windowRect.y = config.GetValue<int>("windowRectY");
+            windowRect.x = (float)config.GetValue<int>("windowRectX");
+            windowRect.y = (float)config.GetValue<int>("windowRectY");
             if ((windowRect.x == 0) && (windowRect.y == 0))
             {
                 windowRect.x = Screen.width * 0.35f;
@@ -109,8 +109,8 @@ namespace ExperimentTracker
             /** Save to config */
             PluginConfiguration config = PluginConfiguration.CreateForType<ExperimentTracker>();
             config.SetValue("isActive", isActive);
-            config.SetValue("windowRectX", windowRect.x);
-            config.SetValue("windowRectY", windowRect.y);
+            config.SetValue("windowRectX", (int)windowRect.x);
+            config.SetValue("windowRectY", (int)windowRect.y);
             config.save();
 
             /** Unregister for events */
