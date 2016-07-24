@@ -77,8 +77,8 @@ namespace ExperimentTracker
             PluginConfiguration config = PluginConfiguration.CreateForType<ExperimentTracker>();
             config.load();
             isActive = config.GetValue<bool>("isActive");
-            windowRect.x = (float)config.GetValue<int>("windowRectX");
-            windowRect.y = (float)config.GetValue<int>("windowRectY");
+            windowRect.x = config.GetValue<int>("windowRectX");
+            windowRect.y = config.GetValue<int>("windowRectY");
             if ((windowRect.x == 0) && (windowRect.y == 0))
             {
                 windowRect.x = Screen.width * 0.35f;
