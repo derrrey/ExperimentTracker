@@ -25,6 +25,9 @@ namespace ExperimentTracker
         private bool nothingToDo = true;
         private Texture2D onActive;
         private Texture2D onInactive;
+        private Vessel curVessel;
+        private ExperimentSituations expSituation = 0;
+        private string curBiome;
 
         /** GUI stuff */
         private Rect windowRect = new Rect();
@@ -82,12 +85,20 @@ namespace ExperimentTracker
                 windowRect.y = Screen.height * 0.1f;
             }
 
+            /** Register for events */
+            GameEvents.onGUIApplicationLauncherReady.Add(setupButton);
+        }
+
+        public void Start()
+        {
+            debugPrint("Start()");
+
             /** Load textures */
             onActive = loadTexture("ExperimentTracker/icons/ET_active");
             onInactive = loadTexture("ExperimentTracker/icons/ET_inactive");
 
-            /** Register for events */
-            GameEvents.onGUIApplicationLauncherReady.Add(setupButton);
+            /** Get active vessel */
+            curVessel = FlightGlobals.ActiveVessel;
         }
 
         /** Called on destroy */
