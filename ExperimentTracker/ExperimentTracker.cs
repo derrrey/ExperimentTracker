@@ -31,16 +31,31 @@ namespace ExperimentTracker
 
         private void OnGUI()
         {
-            windowRect = GUILayout.Window(windowID, windowRect, OnWindow, "ExperimentTracker");
+            if (isActive)
+            {
+                clampToScreen();
+                windowRect = GUILayout.Window(windowID, windowRect, OnWindow, "ExperimentTracker");
+            }
+        }
+
+        private void clampToScreen()
+        {
+            windowRect.x = windowRect.x < 0 ? 0 : windowRect.x;
+            windowRect.x = windowRect.x + windowRect.width >= Screen.width ? (Screen.width - 1) - windowRect.width : windowRect.x;
+            windowRect.y = windowRect.y < 0 ? 0 : windowRect.y;
+            windowRect.y = windowRect.y + windowRect.height >= Screen.height ? (Screen.height - 1) - windowRect.height : windowRect.y;
         }
 
         private void OnWindow(int id)
         {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("This is a label");
-            GUILayout.EndHorizontal();
+            if (isActive)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("This is a label");
+                GUILayout.EndHorizontal();
 
-            GUI.DragWindow();
+                GUI.DragWindow();
+            }
         }
 
         /** Called once at startup */
