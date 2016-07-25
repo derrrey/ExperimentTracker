@@ -23,8 +23,8 @@ namespace ExperimentTracker
         private Texture2D onActive;
         private Texture2D onInactive;
         private Vessel curVessel;
-        private List<ModuleScienceExperiment> experiments;
-        private List<ScienceExperiment> possExperiments;
+        private static List<ModuleScienceExperiment> experiments = new List<ModuleScienceExperiment>();
+        private static List<ScienceExperiment> possExperiments = new List<ScienceExperiment>();
         private ExperimentSituations expSituation = 0;
         private string curBiome;
 
@@ -38,12 +38,12 @@ namespace ExperimentTracker
         {
             if (isActive)
             {
-                clampToScreen();
                 if (nothingToDo)
                 {
                     windowRect.width = windowWidth;
                     windowRect.height = windowHeight;
                 }
+                clampToScreen();
                 windowRect = GUILayout.Window(windowID, windowRect, OnWindow, Text.MODNAME);
             }
         }
@@ -66,6 +66,17 @@ namespace ExperimentTracker
                     GUILayout.BeginHorizontal();
                     GUILayout.Label(Text.NOTHING);
                     GUILayout.EndHorizontal();
+                } else
+                {
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label("Experiments: ");
+                    GUILayout.BeginVertical();
+                    foreach (ScienceExperiment e in possExperiments)
+                    {
+                        GUILayout.Button(e.experimentTitle);
+                    }
+                    GUILayout.EndVertical();
+                    GUILayout.EndHorizontal();
                 }
                 GUI.DragWindow();
             }
@@ -73,11 +84,17 @@ namespace ExperimentTracker
 
         public void FixedUpdate()
         {
-            foreach (ModuleScienceExperiment exp in experiments)
+            if (experiments.Count() > 0)
             {
-                if (!exp.Deployed && !possExperiments.Contains(exp.experiment))
-                    possExperiments.Add(exp.experiment);
+                foreach (ModuleScienceExperiment exp in experiments)
+                {
+                    if (!possExperiments.Contains(exp.experiment))
+                    {
+                        possExperiments.Add(exp.experiment);
+                    }
+                }
             }
+            nothingToDo = possExperiments.Count > 0 ? false : true;
         }
 
         /** Gets all science experiments */
