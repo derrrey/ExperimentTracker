@@ -69,7 +69,9 @@ namespace ExperimentTracker
                     foreach (ModuleScienceExperiment e in possExperiments)
                     {
                         if (GUILayout.Button(e.experimentActionName))
+                        {
                             e.DeployExperiment();
+                        }
                     }
                     GUILayout.EndVertical();
                     GUILayout.EndHorizontal();
@@ -110,8 +112,11 @@ namespace ExperimentTracker
                 ModuleScienceContainer sc = getScienceContainer();
                 foreach (ScienceData sd in exp.GetData())
                 {
-                    exp.DumpData(sd);
-                    sc.AddData(sd);
+                    if (!sc.GetData().Contains(sd))
+                    {
+                        sc.AddData(sd);
+                        exp.DumpData(sd);
+                    }
                 }
             }
         }
