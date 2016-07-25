@@ -23,13 +23,16 @@ namespace ExperimentTracker
         private Texture2D onActive;
         private Texture2D onInactive;
         private Vessel curVessel;
+        private CelestialBody lastBody;
         private List<ModuleScienceExperiment> experiments;
-        private List<ScienceExperiment> possExperiments;
-        private ExperimentSituations expSituation = 0;
+        private List<ModuleScienceExperiment> possExperiments;
+        private ExperimentSituations expSituation;
         private string curBiome;
 
         /** GUI stuff */
         private Rect windowRect = new Rect(0, 0, 400, 50);
+        private float windowHeight = 50;    /** Window height when no experiments are possible */
+        private float windowWidth = 400;    /** Window width when no experiments are possible */
         private int windowID = new System.Random().Next(int.MaxValue);
 
         private void OnGUI()
@@ -63,9 +66,10 @@ namespace ExperimentTracker
                 {
                     GUILayout.BeginHorizontal();
                     GUILayout.BeginVertical();
-                    foreach (ScienceExperiment e in possExperiments)
+                    foreach (ModuleScienceExperiment e in possExperiments)
                     {
-                        GUILayout.Button(e.experimentTitle);
+                        if (GUILayout.Button(e.experimentActionName))
+                            e.DeployExperiment();
                     }
                     GUILayout.EndVertical();
                     GUILayout.EndHorizontal();
@@ -77,17 +81,26 @@ namespace ExperimentTracker
         public void FixedUpdate()
         {
             possExperiments.Clear();
+            windowRect.width = windowWidth;
+            windowRect.height = windowHeight;
             if (experiments.Count() > 0)
             {
                 foreach (ModuleScienceExperiment exp in experiments)
                 {
-                    if (!possExperiments.Contains(exp.experiment))
+                    if (checkExperiment(exp))
                     {
-                        possExperiments.Add(exp.experiment);
+                        possExperiments.Add(exp);
                     }
                 }
             }
-            nothingToDo = possExperiments.Count > 0 ? false : true;
+            nothingToDo = !(possExperiments.Count > 0);
+        }
+
+        private bool checkExperiment(ModuleScienceExperiment exp)
+        {
+            return !possExperiments.Contains(exp) && exp.experiment.BiomeIsRelevantWhile(expSituation)
+                            && exp.experiment.IsAvailableWhile(expSituation, lastBody) && !exp.Deployed && !exp.Inoperable
+                            && exp.experiment.baseValue != 0f;
         }
 
         /** Gets all science experiments */
@@ -145,7 +158,11 @@ namespace ExperimentTracker
 
             /** Initialize lists */
             experiments = getExperiments();
-            possExperiments = new List<ScienceExperiment>();
+            possExperiments = new List<ModuleScienceExperiment>();
+
+            /** Get vessel data */
+            expSituation = ScienceUtil.GetExperimentSituation(curVessel);
+            lastBody = curVessel.lastBody;
         }
 
         /** Called on destroy */
