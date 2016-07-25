@@ -87,6 +87,7 @@ namespace ExperimentTracker
             {
                 foreach (ModuleScienceExperiment exp in experiments)
                 {
+                    transferData(exp);
                     if (checkExperiment(exp))
                     {
                         possExperiments.Add(exp);
@@ -99,8 +100,20 @@ namespace ExperimentTracker
         private bool checkExperiment(ModuleScienceExperiment exp)
         {
             return !possExperiments.Contains(exp) && exp.experiment.BiomeIsRelevantWhile(expSituation)
-                            && exp.experiment.IsAvailableWhile(expSituation, lastBody) && !exp.Deployed && !exp.Inoperable
-                            && exp.experiment.baseValue != 0f;
+                            && exp.experiment.IsAvailableWhile(expSituation, lastBody) && !exp.Deployed && !exp.Inoperable;
+        }
+
+        private void transferData(ModuleScienceExperiment exp)
+        {
+            if (exp.GetScienceCount() > 0)
+            {
+                ModuleScienceContainer sc = getScienceContainer();
+                foreach (ScienceData sd in exp.GetData())
+                {
+                    exp.DumpData(sd);
+                    sc.AddData(sd);
+                }
+            }
         }
 
         /** Gets all science experiments */
