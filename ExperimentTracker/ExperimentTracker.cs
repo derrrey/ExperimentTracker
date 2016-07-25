@@ -16,9 +16,6 @@ namespace ExperimentTracker
 
     public class ExperimentTracker : MonoBehaviour
     {
-        /** modTag to use in every debug message */
-        private static string modTag = "[ExperimentTracker]: ";
-
         /** Used variables */
         private static ApplicationLauncherButton etButton;
         private bool isActive;
@@ -26,6 +23,8 @@ namespace ExperimentTracker
         private Texture2D onActive;
         private Texture2D onInactive;
         private Vessel curVessel;
+        private List<ModuleScienceExperiment> experiments;
+        private List<ScienceExperiment> possExperiments;
         private ExperimentSituations expSituation = 0;
         private string curBiome;
 
@@ -40,7 +39,12 @@ namespace ExperimentTracker
             if (isActive)
             {
                 clampToScreen();
-                windowRect = GUILayout.Window(windowID, windowRect, OnWindow, "ExperimentTracker");
+                if (nothingToDo)
+                {
+                    windowRect.width = windowWidth;
+                    windowRect.height = windowHeight;
+                }
+                windowRect = GUILayout.Window(windowID, windowRect, OnWindow, Text.MODNAME);
             }
         }
 
@@ -59,10 +63,8 @@ namespace ExperimentTracker
             {
                 if (nothingToDo)
                 {
-                    windowRect.width = windowWidth;
-                    windowRect.height = windowHeight;
                     GUILayout.BeginHorizontal();
-                    GUILayout.Label("There are no possible experiments yet");
+                    GUILayout.Label(Text.NOTHING);
                     GUILayout.EndHorizontal();
                 }
                 GUI.DragWindow();
@@ -71,7 +73,11 @@ namespace ExperimentTracker
 
         public void FixedUpdate()
         {
-            
+            foreach (ModuleScienceExperiment exp in experiments)
+            {
+                if (!exp.Deployed && !possExperiments.Contains(exp.experiment))
+                    possExperiments.Add(exp.experiment);
+            }
         }
 
         /** Gets all science experiments */
@@ -90,7 +96,7 @@ namespace ExperimentTracker
         private bool isScientistOnBoard()
         {
             foreach (ProtoCrewMember m in curVessel.GetVesselCrew())
-                if (m.experienceTrait.Title == "Scientist") return true;
+                if (m.experienceTrait.Title == Text.SCIENTIST) return true;
             return false;
         }
 
@@ -126,6 +132,9 @@ namespace ExperimentTracker
 
             /** Get active vessel */
             curVessel = FlightGlobals.ActiveVessel;
+
+            /** Get all experiments */
+            experiments = getExperiments();
         }
 
         /** Called on destroy */
@@ -181,7 +190,7 @@ namespace ExperimentTracker
 
         private static void debugPrint(string s)
         {
-            print(modTag + s);
+            print(Text.MODTAG + s);
         }
     }
 }
