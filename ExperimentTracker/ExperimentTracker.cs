@@ -19,7 +19,7 @@ namespace ExperimentTracker
         /** Used variables */
         private static ApplicationLauncherButton etButton;
         private bool isActive;
-        private bool nothingToDo = true;
+        private bool nothingToDo;
         private Texture2D onActive;
         private Texture2D onInactive;
         private Vessel curVessel;
@@ -29,17 +29,13 @@ namespace ExperimentTracker
         private string curBiome;
 
         /** GUI stuff */
-        private Rect windowRect = new Rect();
-        float windowHeight = 50;
-        float windowWidth = 400;
+        private Rect windowRect = new Rect(0, 0, 400, 50);
         private int windowID = new System.Random().Next(int.MaxValue);
 
         private void OnGUI()
         {
             if (isActive)
             {
-                windowRect.width = windowWidth;
-                windowRect.height = windowHeight;
                 clampToScreen();
                 windowRect = GUILayout.Window(windowID, windowRect, OnWindow, Text.MODNAME);
             }
