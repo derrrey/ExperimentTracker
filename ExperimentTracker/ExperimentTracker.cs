@@ -23,8 +23,8 @@ namespace ExperimentTracker
         private Texture2D onActive;
         private Texture2D onInactive;
         private Vessel curVessel;
-        private static List<ModuleScienceExperiment> experiments = new List<ModuleScienceExperiment>();
-        private static List<ScienceExperiment> possExperiments = new List<ScienceExperiment>();
+        private List<ModuleScienceExperiment> experiments;
+        private List<ScienceExperiment> possExperiments;
         private ExperimentSituations expSituation = 0;
         private string curBiome;
 
@@ -38,11 +38,8 @@ namespace ExperimentTracker
         {
             if (isActive)
             {
-                if (nothingToDo)
-                {
-                    windowRect.width = windowWidth;
-                    windowRect.height = windowHeight;
-                }
+                windowRect.width = windowWidth;
+                windowRect.height = windowHeight;
                 clampToScreen();
                 windowRect = GUILayout.Window(windowID, windowRect, OnWindow, Text.MODNAME);
             }
@@ -69,7 +66,6 @@ namespace ExperimentTracker
                 } else
                 {
                     GUILayout.BeginHorizontal();
-                    GUILayout.Label("Experiments: ");
                     GUILayout.BeginVertical();
                     foreach (ScienceExperiment e in possExperiments)
                     {
@@ -84,6 +80,7 @@ namespace ExperimentTracker
 
         public void FixedUpdate()
         {
+            possExperiments.Clear();
             if (experiments.Count() > 0)
             {
                 foreach (ModuleScienceExperiment exp in experiments)
@@ -150,8 +147,9 @@ namespace ExperimentTracker
             /** Get active vessel */
             curVessel = FlightGlobals.ActiveVessel;
 
-            /** Get all experiments */
+            /** Initialize lists */
             experiments = getExperiments();
+            possExperiments = new List<ScienceExperiment>();
         }
 
         /** Called on destroy */
@@ -180,6 +178,10 @@ namespace ExperimentTracker
                     debugPrint("Setting up button");
                     ApplicationLauncher instance = ApplicationLauncher.Instance;
                     etButton = instance.AddModApplication(toggleActive, toggleActive, null, null, null, null, ApplicationLauncher.AppScenes.FLIGHT, getButtonTexture());
+                } else
+                {
+                    etButton.onTrue = toggleActive;
+                    etButton.onFalse = toggleActive;
                 }
             }
         }
