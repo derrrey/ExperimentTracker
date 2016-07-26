@@ -19,7 +19,7 @@ namespace ExperimentTracker
         /** Used variables */
         private static ApplicationLauncherButton etButton;
         private bool isActive;
-        private bool nothingToDo;
+        private bool hasExperiments;
         private Texture2D onActive;
         private Texture2D onInactive;
         private Vessel curVessel;
@@ -57,7 +57,7 @@ namespace ExperimentTracker
         {
             if (isActive)
             {
-                if (nothingToDo)
+                if (hasExperiments)
                 {
                     GUILayout.BeginHorizontal();
                     GUILayout.Label(Text.NOTHING);
@@ -82,6 +82,7 @@ namespace ExperimentTracker
 
         public void FixedUpdate()
         {
+            BiomeHelper.GetCurrentBiome(out curBiome);
             possExperiments.Clear();
             windowRect.width = windowWidth;
             windowRect.height = windowHeight;
@@ -91,18 +92,18 @@ namespace ExperimentTracker
                 {
                     transferData(exp);
                     if (checkExperiment(exp))
-                    {
                         possExperiments.Add(exp);
-                    }
                 }
             }
-            nothingToDo = !(possExperiments.Count > 0);
+            hasExperiments = possExperiments.Count > 0;
         }
 
         private bool checkExperiment(ModuleScienceExperiment exp)
         {
-            return !possExperiments.Contains(exp) && exp.experiment.BiomeIsRelevantWhile(expSituation)
-                            && exp.experiment.IsAvailableWhile(expSituation, lastBody) && !exp.Deployed && !exp.Inoperable;
+            return (!possExperiments.Contains(exp)) && (exp.experiment.BiomeIsRelevantWhile(expSituation))
+                            && (exp.experiment.IsAvailableWhile(expSituation, lastBody) && !exp.Deployed && !exp.Inoperable);
+                            //&& (ResearchAndDevelopment.GetScienceValue(exp.experiment.baseValue * exp.experiment.dataScale,
+                            //    ResearchAndDevelopment.GetExperimentSubject(exp.experiment, expSituation, lastBody, curBiome)) != 0f);
         }
 
         private void transferData(ModuleScienceExperiment exp)
@@ -110,14 +111,7 @@ namespace ExperimentTracker
             if (exp.GetScienceCount() > 0)
             {
                 ModuleScienceContainer sc = getScienceContainer();
-                foreach (ScienceData sd in exp.GetData())
-                {
-                    if (!sc.GetData().Contains(sd))
-                    {
-                        sc.AddData(sd);
-                        exp.DumpData(sd);
-                    }
-                }
+                exp.onCollectData(sc);
             }
         }
 
