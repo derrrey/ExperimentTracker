@@ -80,6 +80,17 @@ namespace ExperimentTracker
             }
         }
 
+        string currentBiome()
+        {
+            if (curVessel != null)
+                if (curVessel.mainBody.BiomeMap != null)
+                    return !string.IsNullOrEmpty(curVessel.landedAt)
+                        ? Vessel.GetLandedAtString(curVessel.landedAt)
+                        : ScienceUtil.GetExperimentBiome(curVessel.mainBody,
+                            curVessel.latitude, curVessel.longitude);
+            return string.Empty;
+        }
+
         public void FixedUpdate()
         {
             BiomeHelper.GetCurrentBiome(out curBiome);
