@@ -101,8 +101,12 @@ namespace ExperimentTracker
 
         public void FixedUpdate()
         {
-            BiomeHelper.GetCurrentBiome(out curBiome);
-            possExperiments.Clear();
+            curVessel = FlightGlobals.ActiveVessel;
+            curBiome = currentBiome();
+            expSituation = ScienceUtil.GetExperimentSituation(curVessel);
+            lastBody = curVessel.mainBody;
+            experiments = getExperiments();
+            possExperiments = new List<ModuleScienceExperiment>();
             windowRect.width = windowWidth;
             windowRect.height = windowHeight;
             if (experiments.Count() > 0)
