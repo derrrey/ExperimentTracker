@@ -91,6 +91,14 @@ namespace ExperimentTracker
             return string.Empty;
         }
 
+        private ScienceSubject getExperimentSubject(ScienceExperiment exp)
+        {
+            string biome = string.Empty;
+            if (exp.BiomeIsRelevantWhile(expSituation))
+                biome = currentBiome();
+            return ResearchAndDevelopment.GetExperimentSubject(exp, expSituation, lastBody, biome);
+        }
+
         public void FixedUpdate()
         {
             BiomeHelper.GetCurrentBiome(out curBiome);
