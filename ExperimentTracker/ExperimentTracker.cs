@@ -132,7 +132,7 @@ namespace ExperimentTracker
         private bool checkExperiment(ModuleScienceExperiment exp)
         {
             return (!getScienceContainer().HasData(newScienceData(exp)))
-                            && (exp.experiment.IsAvailableWhile(expSituation, lastBody))
+                            && (exp.experiment.IsAvailableWhile(expSituation, lastBody)) && !exp.Inoperable
                             && ResearchAndDevelopment.GetScienceValue(exp.experiment.baseValue * exp.experiment.dataScale,
                                 getExperimentSubject(exp.experiment)) != 0f;
         }
@@ -142,7 +142,8 @@ namespace ExperimentTracker
             if (exp.GetScienceCount() > 0)
             {
                 ModuleScienceContainer sc = getScienceContainer();
-                exp.onCollectData(sc);
+                if (!sc.HasData(newScienceData(exp)))
+                    exp.onCollectData(sc);
             }
         }
 
