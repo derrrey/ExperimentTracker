@@ -121,6 +121,14 @@ namespace ExperimentTracker
             hasExperiments = possExperiments.Count > 0;
         }
 
+        private ScienceData newScienceData(ModuleScienceExperiment exp)
+        {
+            return new ScienceData(exp.experiment.baseValue * getExperimentSubject(exp.experiment).dataScale, exp.xmitDataScalar, 0f,
+                    getExperimentSubject(exp.experiment).id,
+                    getExperimentSubject(exp.experiment).title
+                );
+        }
+
         private bool checkExperiment(ModuleScienceExperiment exp)
         {
             return (!possExperiments.Contains(exp)) && (exp.experiment.BiomeIsRelevantWhile(expSituation))
