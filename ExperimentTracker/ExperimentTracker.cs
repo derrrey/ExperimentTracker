@@ -57,7 +57,7 @@ namespace ExperimentTracker
         {
             if (isActive)
             {
-                if (hasExperiments)
+                if (!hasExperiments)
                 {
                     GUILayout.BeginHorizontal();
                     GUILayout.Label(Text.NOTHING);
