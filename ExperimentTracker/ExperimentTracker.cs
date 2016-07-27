@@ -205,7 +205,8 @@ namespace ExperimentTracker
 
             /** Get vessel data */
             expSituation = ScienceUtil.GetExperimentSituation(curVessel);
-            lastBody = curVessel.lastBody;
+            lastBody = curVessel.mainBody;
+            curBiome = currentBiome();
         }
 
         /** Called on destroy */
