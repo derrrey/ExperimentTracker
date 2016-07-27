@@ -131,10 +131,10 @@ namespace ExperimentTracker
 
         private bool checkExperiment(ModuleScienceExperiment exp)
         {
-            return (!possExperiments.Contains(exp)) && (exp.experiment.BiomeIsRelevantWhile(expSituation))
-                            && (exp.experiment.IsAvailableWhile(expSituation, lastBody) && !exp.Deployed && !exp.Inoperable);
-                            //&& (ResearchAndDevelopment.GetScienceValue(exp.experiment.baseValue * exp.experiment.dataScale,
-                            //    ResearchAndDevelopment.GetExperimentSubject(exp.experiment, expSituation, lastBody, curBiome)) != 0f);
+            return (!getScienceContainer().HasData(newScienceData(exp)))
+                            && (exp.experiment.IsAvailableWhile(expSituation, lastBody))
+                            && ResearchAndDevelopment.GetScienceValue(exp.experiment.baseValue * exp.experiment.dataScale,
+                                getExperimentSubject(exp.experiment)) != 0f;
         }
 
         private void transferData(ModuleScienceExperiment exp)
