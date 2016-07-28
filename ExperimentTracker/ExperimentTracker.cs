@@ -130,8 +130,8 @@ namespace ExperimentTracker
 
         private bool checkExperiment(ModuleScienceExperiment exp)
         {
-            return (!getScienceContainer().HasData(newScienceData(exp)))
-                            && (exp.experiment.IsAvailableWhile(expSituation, lastBody)) && !exp.Inoperable
+            return (!possExperiments.Contains(exp))
+                            && (exp.experiment.IsAvailableWhile(expSituation, lastBody)) && !exp.Inoperable && !exp.Deployed
                             && ResearchAndDevelopment.GetScienceValue(exp.experiment.baseValue * exp.experiment.dataScale,
                                 getExperimentSubject(exp.experiment)) != 0f;
         }
