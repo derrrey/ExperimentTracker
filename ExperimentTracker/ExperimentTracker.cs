@@ -71,6 +71,7 @@ namespace ExperimentTracker
                         if (GUILayout.Button(e.experimentActionName))
                         {
                             e.DeployExperiment();
+                            possExperiments.Remove(e);
                         }
                     }
                     GUILayout.EndVertical();
@@ -99,24 +100,34 @@ namespace ExperimentTracker
             return ResearchAndDevelopment.GetExperimentSubject(exp, expSituation, lastBody, biome);
         }
 
+        private bool statusHasChanged()
+        {
+            return curVessel != FlightGlobals.ActiveVessel || curBiome != currentBiome() ||
+                expSituation != ScienceUtil.GetExperimentSituation(curVessel) || lastBody != curVessel.mainBody ||
+                experiments != getExperiments();
+        }
+
         public void FixedUpdate()
         {
-            curVessel = FlightGlobals.ActiveVessel;
-            curBiome = currentBiome();
-            expSituation = ScienceUtil.GetExperimentSituation(curVessel);
-            lastBody = curVessel.mainBody;
-            experiments = getExperiments();
-            possExperiments = new List<ModuleScienceExperiment>();
-            windowRect.width = windowWidth;
-            windowRect.height = windowHeight;
-            if (experiments.Count() > 0)
+            if (statusHasChanged())
             {
-                foreach (ModuleScienceExperiment exp in experiments)
+                curVessel = FlightGlobals.ActiveVessel;
+                curBiome = currentBiome();
+                expSituation = ScienceUtil.GetExperimentSituation(curVessel);
+                lastBody = curVessel.mainBody;
+                experiments = getExperiments();
+                possExperiments = new List<ModuleScienceExperiment>();
+                if (experiments.Count() > 0)
                 {
-                    if (checkExperiment(exp))
-                        possExperiments.Add(exp);
+                    foreach (ModuleScienceExperiment exp in experiments)
+                    {
+                        if (checkExperiment(exp))
+                            possExperiments.Add(exp);
+                    }
                 }
             }
+            windowRect.width = windowWidth;
+            windowRect.height = windowHeight;
             hasExperiments = possExperiments.Count > 0;
         }
 
