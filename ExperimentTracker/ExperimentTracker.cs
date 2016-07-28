@@ -113,7 +113,6 @@ namespace ExperimentTracker
             {
                 foreach (ModuleScienceExperiment exp in experiments)
                 {
-                    transferData(exp);
                     if (checkExperiment(exp))
                         possExperiments.Add(exp);
                 }
@@ -135,16 +134,6 @@ namespace ExperimentTracker
                             && (exp.experiment.IsAvailableWhile(expSituation, lastBody)) && !exp.Inoperable
                             && ResearchAndDevelopment.GetScienceValue(exp.experiment.baseValue * exp.experiment.dataScale,
                                 getExperimentSubject(exp.experiment)) != 0f;
-        }
-
-        private void transferData(ModuleScienceExperiment exp)
-        {
-            if (exp.GetScienceCount() > 0)
-            {
-                ModuleScienceContainer sc = getScienceContainer();
-                if (!sc.HasData(newScienceData(exp)))
-                    exp.onCollectData(sc);
-            }
         }
 
         /** Gets all science experiments */
