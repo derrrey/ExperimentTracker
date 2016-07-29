@@ -44,6 +44,7 @@ namespace ExperimentTracker
             }
         }
 
+        /** Clamps GUI to window size */
         private void clampToScreen()
         {
             windowRect.x = windowRect.x < 0 ? 0 : windowRect.x;
@@ -81,6 +82,7 @@ namespace ExperimentTracker
             }
         }
 
+        /** Finds the current biome string */
         string currentBiome()
         {
             if (curVessel != null)
@@ -92,6 +94,7 @@ namespace ExperimentTracker
             return string.Empty;
         }
 
+        /** Returns the ScienceSubject to a given ScienceExperiment */
         private ScienceSubject getExperimentSubject(ScienceExperiment exp)
         {
             string biome = string.Empty;
@@ -100,6 +103,7 @@ namespace ExperimentTracker
             return ResearchAndDevelopment.GetExperimentSubject(exp, expSituation, lastBody, biome);
         }
 
+        /** Determines whether the status of the vessel has changed */
         private bool statusHasChanged()
         {
             return curVessel != FlightGlobals.ActiveVessel || curBiome != currentBiome() ||
@@ -107,6 +111,7 @@ namespace ExperimentTracker
                 experiments != getExperiments();
         }
 
+        /** Called every frame */
         public void FixedUpdate()
         {
             if (statusHasChanged())
@@ -131,6 +136,7 @@ namespace ExperimentTracker
             hasExperiments = possExperiments.Count > 0;
         }
 
+        /** Returns a ScienceData object build using the given ModuleScienceExperiment */
         private ScienceData newScienceData(ModuleScienceExperiment exp)
         {
             return new ScienceData(exp.experiment.baseValue * getExperimentSubject(exp.experiment).dataScale, exp.xmitDataScalar, 0f,
@@ -139,6 +145,7 @@ namespace ExperimentTracker
                 );
         }
 
+        /** Checks whether a ModuleScienceExperiment is suitable for the current situation */
         private bool checkExperiment(ModuleScienceExperiment exp)
         {
             return (!possExperiments.Contains(exp))
