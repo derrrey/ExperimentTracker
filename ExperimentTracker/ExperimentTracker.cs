@@ -153,14 +153,6 @@ namespace ExperimentTracker
             return FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleScienceExperiment>();
         }
 
-        /** Checks if there is a scientist on board to rerun experiments */
-        private bool isScientistOnBoard()
-        {
-            foreach (ProtoCrewMember m in curVessel.GetVesselCrew())
-                if (m.experienceTrait.Title == Text.SCIENTIST) return true;
-            return false;
-        }
-
         /** Called once at startup */
         public void Awake()
         {
