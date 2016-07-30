@@ -22,6 +22,7 @@ namespace ExperimentTracker
         private bool hasExperiments;
         private Texture2D onActive;
         private Texture2D onInactive;
+        private Texture2D onReady;
         private Vessel curVessel;
         private CelestialBody lastBody;
         private List<ModuleScienceExperiment> experiments;
@@ -130,6 +131,10 @@ namespace ExperimentTracker
                             possExperiments.Add(exp);
                     }
                 }
+                if (possExperiments.Count > 0 && etButton != null && !isActive)
+                    etButton.SetTexture(onReady);
+                else if (etButton != null)
+                    etButton.SetTexture(getButtonTexture());
             }
             windowRect.width = windowWidth;
             windowRect.height = windowHeight;
@@ -195,6 +200,7 @@ namespace ExperimentTracker
             /** Load textures */
             onActive = loadTexture("ExperimentTracker/icons/ET_active");
             onInactive = loadTexture("ExperimentTracker/icons/ET_inactive");
+            onReady = loadTexture("ExperimentTracker/icons/ET_ready");
 
             /** Get active vessel */
             curVessel = FlightGlobals.ActiveVessel;
