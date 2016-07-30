@@ -108,8 +108,7 @@ namespace ExperimentTracker
         private bool statusHasChanged()
         {
             return curVessel != FlightGlobals.ActiveVessel || curBiome != currentBiome() ||
-                expSituation != ScienceUtil.GetExperimentSituation(curVessel) || lastBody != curVessel.mainBody ||
-                experiments != getExperiments();
+                expSituation != ScienceUtil.GetExperimentSituation(curVessel) || lastBody != curVessel.mainBody;
         }
 
         /** Called every frame */
