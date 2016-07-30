@@ -151,7 +151,7 @@ namespace ExperimentTracker
             return (!possExperiments.Contains(exp))
                             && (exp.experiment.IsAvailableWhile(expSituation, lastBody)) && !exp.Inoperable && !exp.Deployed
                             && ResearchAndDevelopment.GetScienceValue(exp.experiment.baseValue * exp.experiment.dataScale,
-                                getExperimentSubject(exp.experiment)) != 0f;
+                                getExperimentSubject(exp.experiment)) > 0.1f;
         }
 
         /** Gets all science experiments */
