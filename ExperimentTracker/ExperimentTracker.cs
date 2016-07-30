@@ -148,7 +148,7 @@ namespace ExperimentTracker
         /** Checks whether a ModuleScienceExperiment is suitable for the current situation */
         private bool checkExperiment(ModuleScienceExperiment exp)
         {
-            return (!possExperiments.Contains(exp))
+            return (!getScienceContainer().HasData(newScienceData(exp)))
                             && (exp.experiment.IsAvailableWhile(expSituation, lastBody)) && !exp.Inoperable && !exp.Deployed
                             && ResearchAndDevelopment.GetScienceValue(exp.experiment.baseValue * exp.experiment.dataScale,
                                 getExperimentSubject(exp.experiment)) > 1f;
