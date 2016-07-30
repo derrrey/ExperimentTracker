@@ -160,6 +160,12 @@ namespace ExperimentTracker
             return FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleScienceExperiment>();
         }
 
+        /** Gets the science container to store all science data */
+        private ModuleScienceContainer getScienceContainer()
+        {
+            return FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleScienceContainer>().FirstOrDefault();
+        }
+
         /** Called once at startup */
         public void Awake()
         {
