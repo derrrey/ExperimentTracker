@@ -73,7 +73,6 @@ namespace ExperimentTracker
                         if (GUILayout.Button(e.experimentActionName))
                         {
                             e.DeployExperiment();
-                            possExperiments.Remove(e);
                         }
                     }
                     GUILayout.EndVertical();
@@ -152,10 +151,18 @@ namespace ExperimentTracker
         /** Checks whether a ModuleScienceExperiment is suitable for the current situation */
         private bool checkExperiment(ModuleScienceExperiment exp)
         {
-            return (!getScienceContainer().HasData(newScienceData(exp)))
+            return (!getScienceContainer().HasData(newScienceData(exp))) && (!inPossExp(exp))
                             && (exp.experiment.IsAvailableWhile(expSituation, lastBody)) && !exp.Inoperable && !exp.Deployed
                             && ResearchAndDevelopment.GetScienceValue(exp.experiment.baseValue * exp.experiment.dataScale,
                                 getExperimentSubject(exp.experiment)) > 1f;
+        }
+
+        private bool inPossExp(ModuleScienceExperiment exp)
+        {
+            foreach (ModuleScienceExperiment e in possExperiments)
+                if (e.experiment.experimentTitle == exp.experiment.experimentTitle)
+                    return true;
+            return false;
         }
 
         /** Gets all science experiments */
