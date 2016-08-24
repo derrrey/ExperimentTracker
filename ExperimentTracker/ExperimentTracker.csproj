@@ -54,8 +54,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program Lite\GameData\ExperimentTracker\Plugins\"
-"C:\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program Lite\KSP_x64.exe"</PostBuildEvent>
+    <PostBuildEvent>copy "$(TargetPath)" "D:\Games\steamapps\common\Kerbal Space Program Lite\GameData\ExperimentTracker\Plugins\"
+"D:\Games\steamapps\common\Kerbal Space Program Lite\KSP_x64.exe"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
