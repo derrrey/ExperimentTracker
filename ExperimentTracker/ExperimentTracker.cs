@@ -19,7 +19,6 @@ namespace ExperimentTracker
         /** Used variables */
         private static ApplicationLauncherButton etButton;
         private bool isActive;
-        private bool hasExperiments;
         private Texture2D onActive;
         private Texture2D onInactive;
         private Texture2D onReady;
@@ -59,7 +58,7 @@ namespace ExperimentTracker
         {
             if (isActive)
             {
-                if (!hasExperiments)
+                if (possExperiments.Count == 0)
                 {
                     GUILayout.BeginHorizontal();
                     GUILayout.Label(Text.NOTHING);
@@ -106,8 +105,8 @@ namespace ExperimentTracker
         /** Determines whether the status of the vessel has changed */
         private bool statusHasChanged()
         {
-            return curVessel != FlightGlobals.ActiveVessel || curBiome != currentBiome() ||
-                expSituation != ScienceUtil.GetExperimentSituation(curVessel) || lastBody != curVessel.mainBody;
+            return FlightGlobals.ActiveVessel.loaded && (curVessel != FlightGlobals.ActiveVessel || curBiome != currentBiome() ||
+                expSituation != ScienceUtil.GetExperimentSituation(curVessel) || lastBody != curVessel.mainBody);
         }
 
         /** Called every frame */
@@ -115,6 +114,7 @@ namespace ExperimentTracker
         {
             if (statusHasChanged())
             {
+                debugPrint("Update()");
                 curVessel = FlightGlobals.ActiveVessel;
                 curBiome = currentBiome();
                 expSituation = ScienceUtil.GetExperimentSituation(curVessel);
@@ -136,7 +136,6 @@ namespace ExperimentTracker
             }
             windowRect.width = windowWidth;
             windowRect.height = windowHeight;
-            hasExperiments = possExperiments.Count > 0;
         }
 
         /** Returns a ScienceData object build using the given ModuleScienceExperiment */
@@ -151,18 +150,10 @@ namespace ExperimentTracker
         /** Checks whether a ModuleScienceExperiment is suitable for the current situation */
         private bool checkExperiment(ModuleScienceExperiment exp)
         {
-            return (!getScienceContainer().HasData(newScienceData(exp))) && (!inPossExp(exp))
-                            && (exp.experiment.IsAvailableWhile(expSituation, lastBody)) && !exp.Inoperable && !exp.Deployed
-                            && ResearchAndDevelopment.GetScienceValue(exp.experiment.baseValue * exp.experiment.dataScale,
+            return (!(getScienceContainer().HasData(newScienceData(exp))))
+                            && !exp.Inoperable && !exp.Deployed && ResearchAndDevelopment.GetScienceValue(
+                                exp.experiment.baseValue * exp.experiment.dataScale,
                                 getExperimentSubject(exp.experiment)) > 1f;
-        }
-
-        private bool inPossExp(ModuleScienceExperiment exp)
-        {
-            foreach (ModuleScienceExperiment e in possExperiments)
-                if (e.experiment.experimentTitle == exp.experiment.experimentTitle)
-                    return true;
-            return false;
         }
 
         /** Gets all science experiments */
@@ -207,18 +198,6 @@ namespace ExperimentTracker
             onActive = loadTexture("ExperimentTracker/icons/ET_active");
             onInactive = loadTexture("ExperimentTracker/icons/ET_inactive");
             onReady = loadTexture("ExperimentTracker/icons/ET_ready");
-
-            /** Get active vessel */
-            curVessel = FlightGlobals.ActiveVessel;
-
-            /** Initialize lists */
-            experiments = getExperiments();
-            possExperiments = new List<ModuleScienceExperiment>();
-
-            /** Get vessel data */
-            expSituation = ScienceUtil.GetExperimentSituation(curVessel);
-            lastBody = curVessel.mainBody;
-            curBiome = currentBiome();
         }
 
         /** Called on destroy */
