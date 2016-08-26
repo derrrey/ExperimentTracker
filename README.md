@@ -1,0 +1,23 @@
+#ExperimentTracker
+
+Adds a little GUI to the flight scene that lists all experiments and helps to deploy them fast and easy.
+
+###What this mod can do:
+- Adds an icon to the flight scene
+- When active, it lists all the science experiments that can be done
+- The experiments can be deployed with a click on the GUI
+- When inactive, it shows whether there are experiments (yellow) or not (red)
+
+###What this mod might do in the future:
+- Show the biome you are in and other informations
+- Functionality to filter the experiments
+- Special options for each experiment
+
+###How to install:
+1. Download the .zip file.
+2. Unpack the .zip file.
+3. Copy the ExperimentTracker/ folder to your KSP installations GameData/ folder.
+
+####Disclaimer
+This is a KSP mod tested with version 1.1.3.
+Any other versions of the game are not supported officially.
