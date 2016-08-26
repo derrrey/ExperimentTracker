@@ -126,21 +126,16 @@ namespace ExperimentTracker
             experiments = getExperiments();
             possExperiments = new List<ModuleScienceExperiment>();
             if (experiments.Count() > 0)
-            {
                 foreach (ModuleScienceExperiment exp in experiments)
-                {
                     if (checkExperiment(exp))
                         possExperiments.Add(exp);
-                }
-            }
         }
 
         /** Called every frame */
         public void FixedUpdate()
         {
-            if (statusHasChanged() )
+            if (statusHasChanged())
                 statusUpdate();
-
             if (possExperiments.Count > 0 && etButton != null && !isActive)
                 etButton.SetTexture(onReady);
             else if (etButton != null)
@@ -210,6 +205,7 @@ namespace ExperimentTracker
             onInactive = loadTexture("ExperimentTracker/icons/ET_inactive");
             onReady = loadTexture("ExperimentTracker/icons/ET_ready");
 
+            /** Dp first update after two seconds */
             StartCoroutine(slowUpdate(2));
         }
 
