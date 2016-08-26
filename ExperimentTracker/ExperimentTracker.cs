@@ -148,20 +148,10 @@ namespace ExperimentTracker
             windowRect.height = windowHeight;
         }
 
-        /** Returns a ScienceData object build using the given ModuleScienceExperiment */
-        private ScienceData newScienceData(ModuleScienceExperiment exp)
-        {
-            return new ScienceData(exp.experiment.baseValue * getExperimentSubject(exp.experiment).dataScale, exp.xmitDataScalar, 0f,
-                    getExperimentSubject(exp.experiment).id,
-                    getExperimentSubject(exp.experiment).title
-                );
-        }
-
         /** Checks whether a ModuleScienceExperiment is suitable for the current situation */
         private bool checkExperiment(ModuleScienceExperiment exp)
         {
-            return (!(getScienceContainer().HasData(newScienceData(exp))))
-                            && !exp.Inoperable && !exp.Deployed && ResearchAndDevelopment.GetScienceValue(
+            return !exp.Inoperable && !exp.Deployed && ResearchAndDevelopment.GetScienceValue(
                                 exp.experiment.baseValue * exp.experiment.dataScale,
                                 getExperimentSubject(exp.experiment)) > 1f;
         }
@@ -170,12 +160,6 @@ namespace ExperimentTracker
         private List<ModuleScienceExperiment> getExperiments()
         {
             return FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleScienceExperiment>();
-        }
-
-        /** Gets the science container to store all science data */
-        private ModuleScienceContainer getScienceContainer()
-        {
-            return FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleScienceContainer>().FirstOrDefault();
         }
 
         /** Called once at startup */
@@ -191,7 +175,7 @@ namespace ExperimentTracker
             windowRect.y = config.GetValue<int>("windowRectY");
             if ((windowRect.x == 0) && (windowRect.y == 0))
             {
-                windowRect.x = Screen.width * 0.2f;
+                windowRect.x = Screen.width * 0.6f;
                 windowRect.y = 0;
             }
 
