@@ -32,8 +32,8 @@ namespace ExperimentTracker
         private string curBiome;
 
         /** GUI stuff */
-        private static float windowHeight = Screen.width / 10;    /** Window height when no experiments are possible */
-        private static float windowWidth = Screen.height / 5;     /** Window width when no experiments are possible */
+        private static float windowHeight = 0;
+        private static float windowWidth = Screen.height / 5;
         private Rect windowRect = new Rect(0, 0, windowWidth, windowHeight);
         private int windowID = new System.Random().Next(int.MaxValue);
 
