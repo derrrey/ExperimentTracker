@@ -19,6 +19,8 @@ namespace ExperimentTracker
         /** Used variables */
         private static ApplicationLauncherButton etButton;
         private bool isActive;
+        private float updateTime = 2f;
+        private float timeSince = 0f;
         private Texture2D onActive;
         private Texture2D onInactive;
         private Texture2D onReady;
@@ -72,7 +74,6 @@ namespace ExperimentTracker
                         if (GUILayout.Button(e.experimentActionName))
                         {
                             e.DeployExperiment();
-                            StartCoroutine(slowUpdate(2));
                         }
                     }
                     GUILayout.EndVertical();
@@ -80,13 +81,6 @@ namespace ExperimentTracker
                 }
                 GUI.DragWindow();
             }
-        }
-
-        /** Do a status update after time seconds */
-        private IEnumerator slowUpdate(int time)
-        {
-            yield return new WaitForSeconds(time);
-            statusUpdate();
         }
 
         /** Finds the current biome string */
@@ -117,6 +111,16 @@ namespace ExperimentTracker
                 expSituation != ScienceUtil.GetExperimentSituation(curVessel) || lastBody != curVessel.mainBody);
         }
 
+        private bool timeIsUp()
+        {
+            if ((timeSince += Time.deltaTime) >= updateTime)
+            {
+                timeSince = 0;
+                return true;
+            }
+            return false;
+        }
+
         private void statusUpdate()
         {
             curVessel = FlightGlobals.ActiveVessel;
@@ -134,7 +138,7 @@ namespace ExperimentTracker
         /** Called every frame */
         public void FixedUpdate()
         {
-            if (statusHasChanged())
+            if (statusHasChanged() || timeIsUp())
                 statusUpdate();
             if (possExperiments.Count > 0 && etButton != null && !isActive)
                 etButton.SetTexture(onReady);
@@ -204,9 +208,6 @@ namespace ExperimentTracker
             onActive = loadTexture("ExperimentTracker/icons/ET_active");
             onInactive = loadTexture("ExperimentTracker/icons/ET_inactive");
             onReady = loadTexture("ExperimentTracker/icons/ET_ready");
-
-            /** Dp first update after two seconds */
-            StartCoroutine(slowUpdate(2));
         }
 
         /** Called on destroy */
