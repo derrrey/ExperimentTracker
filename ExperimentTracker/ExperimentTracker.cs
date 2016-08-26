@@ -72,6 +72,7 @@ namespace ExperimentTracker
                         if (GUILayout.Button(e.experimentActionName))
                         {
                             e.DeployExperiment();
+                            StartCoroutine(slowUpdate(2));
                         }
                     }
                     GUILayout.EndVertical();
@@ -81,8 +82,15 @@ namespace ExperimentTracker
             }
         }
 
+        /** Do a status update after time seconds */
+        private IEnumerator slowUpdate(int time)
+        {
+            yield return new WaitForSeconds(time);
+            statusUpdate();
+        }
+
         /** Finds the current biome string */
-        string currentBiome()
+        private string currentBiome()
         {
             if (curVessel != null)
                 if (curVessel.mainBody.BiomeMap != null)
@@ -109,31 +117,34 @@ namespace ExperimentTracker
                 expSituation != ScienceUtil.GetExperimentSituation(curVessel) || lastBody != curVessel.mainBody);
         }
 
+        private void statusUpdate()
+        {
+            curVessel = FlightGlobals.ActiveVessel;
+            curBiome = currentBiome();
+            expSituation = ScienceUtil.GetExperimentSituation(curVessel);
+            lastBody = curVessel.mainBody;
+            experiments = getExperiments();
+            possExperiments = new List<ModuleScienceExperiment>();
+            if (experiments.Count() > 0)
+            {
+                foreach (ModuleScienceExperiment exp in experiments)
+                {
+                    if (checkExperiment(exp))
+                        possExperiments.Add(exp);
+                }
+            }
+        }
+
         /** Called every frame */
         public void FixedUpdate()
         {
-            if (statusHasChanged())
-            {
-                debugPrint("Update()");
-                curVessel = FlightGlobals.ActiveVessel;
-                curBiome = currentBiome();
-                expSituation = ScienceUtil.GetExperimentSituation(curVessel);
-                lastBody = curVessel.mainBody;
-                experiments = getExperiments();
-                possExperiments = new List<ModuleScienceExperiment>();
-                if (experiments.Count() > 0)
-                {
-                    foreach (ModuleScienceExperiment exp in experiments)
-                    {
-                        if (checkExperiment(exp))
-                            possExperiments.Add(exp);
-                    }
-                }
-                if (possExperiments.Count > 0 && etButton != null && !isActive)
-                    etButton.SetTexture(onReady);
-                else if (etButton != null)
-                    etButton.SetTexture(getButtonTexture());
-            }
+            if (statusHasChanged() )
+                statusUpdate();
+
+            if (possExperiments.Count > 0 && etButton != null && !isActive)
+                etButton.SetTexture(onReady);
+            else if (etButton != null)
+                etButton.SetTexture(getButtonTexture());
             windowRect.width = windowWidth;
             windowRect.height = windowHeight;
         }
@@ -198,6 +209,8 @@ namespace ExperimentTracker
             onActive = loadTexture("ExperimentTracker/icons/ET_active");
             onInactive = loadTexture("ExperimentTracker/icons/ET_inactive");
             onReady = loadTexture("ExperimentTracker/icons/ET_ready");
+
+            StartCoroutine(slowUpdate(2));
         }
 
         /** Called on destroy */
@@ -217,7 +230,7 @@ namespace ExperimentTracker
         }
 
         /** Set up for the toolbar-button */
-        public void setupButton()
+        private void setupButton()
         {
             if (ApplicationLauncher.Ready)
             {
