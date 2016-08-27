@@ -9,8 +9,6 @@ namespace ExperimentTracker
     {
         public const string MODTAG = "[ExperimentTracker]: ";
         public const string MODNAME = "ExperimentTracker";
-        public const string NOTHING = "There are no possible experiments yet";
-
-        public const string SCIENTIST = "Scientist";
+        public const string NOTHING = "Nothing to do";
     }
 }
