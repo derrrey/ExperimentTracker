@@ -58,29 +58,34 @@ namespace ExperimentTracker
         }
 
         /** Called every frame */
-        private void OnWindow(int id)
+        private void mainWindow(int id)
         {
             if (expGUI)
             {
-                if (possExperiments.Count == 0)
+                GUILayout.BeginHorizontal();
+                if (GUILayout.Button("Infos"))
+                    infGUI = !infGUI;
+                if (GUILayout.Button("Close all"))
                 {
-                    GUILayout.BeginHorizontal();
-                    GUILayout.Label(Text.NOTHING);
-                    GUILayout.EndHorizontal();
-                } else
-                {
-                    GUILayout.BeginHorizontal();
-                    GUILayout.BeginVertical();
-                    foreach (ModuleScienceExperiment e in possExperiments)
-                    {
-                        if (GUILayout.Button(e.experimentActionName))
-                        {
-                            e.DeployExperiment();
-                        }
-                    }
-                    GUILayout.EndVertical();
-                    GUILayout.EndHorizontal();
+                    expGUI = false;
+                    infGUI = false;
                 }
+                GUILayout.EndHorizontal();
+                GUILayout.BeginHorizontal();
+                GUILayout.BeginVertical();
+                GUILayout.Space(6);
+                if (possExperiments.Count > 0)
+                {
+                    foreach (ModuleScienceExperiment e in possExperiments)
+                        if (GUILayout.Button(e.experimentActionName))
+                            e.DeployExperiment();
+                }
+                else
+                {
+                    GUILayout.Label(Text.NOTHING);
+                }
+                GUILayout.EndVertical();
+                GUILayout.EndHorizontal();
                 GUI.DragWindow();
             }
         }
