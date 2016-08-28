@@ -20,7 +20,7 @@ namespace ExperimentTracker
         private static ApplicationLauncherButton etButton;
         private bool expGUI;
         private bool infGUI;
-        private float updateTime = 2f;
+        private float updateTime = 1f;
         private float timeSince = 0f;
         private Texture2D onActive;
         private Texture2D onInactive;
