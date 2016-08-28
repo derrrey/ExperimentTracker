@@ -35,7 +35,7 @@ namespace ExperimentTracker
         /** GUI stuff */
         private static float windowHeight = 0;
         private static float windowWidth = Screen.height / 5;
-        private Rect windowRect = new Rect(0, 0, windowWidth, windowHeight);
+        private Rect expListRect = new Rect(0, 0, windowWidth, windowHeight);
         private int windowID = new System.Random().Next(int.MaxValue);
 
         private void OnGUI()
@@ -43,17 +43,17 @@ namespace ExperimentTracker
             if (expGUI)
             {
                 clampToScreen();
-                windowRect = GUILayout.Window(windowID, windowRect, OnWindow, Text.MODNAME);
+                expListRect = GUILayout.Window(windowID, expListRect, OnWindow, Text.MODNAME);
             }
         }
 
         /** Clamps GUI to window size */
         private void clampToScreen()
         {
-            windowRect.x = windowRect.x < 0 ? 0 : windowRect.x;
-            windowRect.x = windowRect.x + windowRect.width >= Screen.width ? (Screen.width - 1) - windowRect.width : windowRect.x;
-            windowRect.y = windowRect.y < 0 ? 0 : windowRect.y;
-            windowRect.y = windowRect.y + windowRect.height >= Screen.height ? (Screen.height - 1) - windowRect.height : windowRect.y;
+            expListRect.x = expListRect.x < 0 ? 0 : expListRect.x;
+            expListRect.x = expListRect.x + expListRect.width >= Screen.width ? (Screen.width - 1) - expListRect.width : expListRect.x;
+            expListRect.y = expListRect.y < 0 ? 0 : expListRect.y;
+            expListRect.y = expListRect.y + expListRect.height >= Screen.height ? (Screen.height - 1) - expListRect.height : expListRect.y;
         }
 
         /** Called every frame */
@@ -145,8 +145,8 @@ namespace ExperimentTracker
                 etButton.SetTexture(onReady);
             else if (etButton != null)
                 etButton.SetTexture(getButtonTexture());
-            windowRect.width = windowWidth;
-            windowRect.height = windowHeight;
+            expListRect.width = windowWidth;
+            expListRect.height = windowHeight;
         }
 
         /** Checks whether a ModuleScienceExperiment is suitable for the current situation */
@@ -171,13 +171,13 @@ namespace ExperimentTracker
             /** Config loading setup */
             PluginConfiguration config = PluginConfiguration.CreateForType<ExperimentTracker>();
             config.load();
-            expGUI = config.GetValue<bool>("isActive");
-            windowRect.x = config.GetValue<int>("windowRectX");
-            windowRect.y = config.GetValue<int>("windowRectY");
-            if ((windowRect.x == 0) && (windowRect.y == 0))
+            expGUI = config.GetValue<bool>("expGUI");
+            expListRect.x = config.GetValue<int>("expListRectX");
+            expListRect.y = config.GetValue<int>("expListRectY");
+            if ((expListRect.x == 0) && (expListRect.y == 0))
             {
-                windowRect.x = Screen.width * 0.6f;
-                windowRect.y = 0;
+                expListRect.x = Screen.width * 0.6f;
+                expListRect.y = 0;
             }
 
             /** Register for events */
@@ -202,9 +202,9 @@ namespace ExperimentTracker
 
             /** Save to config */
             PluginConfiguration config = PluginConfiguration.CreateForType<ExperimentTracker>();
-            config.SetValue("isActive", expGUI);
-            config.SetValue("windowRectX", (int)windowRect.x);
-            config.SetValue("windowRectY", (int)windowRect.y);
+            config.SetValue("expGUI", expGUI);
+            config.SetValue("expListRectX", (int)expListRect.x);
+            config.SetValue("expListRectY", (int)expListRect.y);
             config.save();
 
             /** Unregister for events */
