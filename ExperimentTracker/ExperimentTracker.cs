@@ -36,24 +36,25 @@ namespace ExperimentTracker
         private static float windowHeight = 0;
         private static float windowWidth = Screen.height / 5;
         private Rect expListRect = new Rect(0, 0, windowWidth, windowHeight);
-        private int windowID = new System.Random().Next(int.MaxValue);
+        private Rect infRect = new Rect(0, 0, windowWidth, windowHeight);
 
         private void OnGUI()
         {
             if (expGUI)
-            {
-                clampToScreen();
-                expListRect = GUILayout.Window(windowID, expListRect, OnWindow, Text.MODNAME);
-            }
+                expListRect = GUILayout.Window(42, expListRect, mainWindow, Text.MODNAME);
+            if (infGUI)
+                infRect = GUILayout.Window(1337, infRect, infWindow, Text.INFO);
         }
 
-        /** Clamps GUI to window size */
-        private void clampToScreen()
+        private void infWindow(int id)
         {
-            expListRect.x = expListRect.x < 0 ? 0 : expListRect.x;
-            expListRect.x = expListRect.x + expListRect.width >= Screen.width ? (Screen.width - 1) - expListRect.width : expListRect.x;
-            expListRect.y = expListRect.y < 0 ? 0 : expListRect.y;
-            expListRect.y = expListRect.y + expListRect.height >= Screen.height ? (Screen.height - 1) - expListRect.height : expListRect.y;
+            if (infGUI)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Test");
+                GUILayout.EndHorizontal();
+                GUI.DragWindow();
+            }
         }
 
         /** Called every frame */
@@ -174,10 +175,18 @@ namespace ExperimentTracker
             expGUI = config.GetValue<bool>("expGUI");
             expListRect.x = config.GetValue<int>("expListRectX");
             expListRect.y = config.GetValue<int>("expListRectY");
+            infGUI = config.GetValue<bool>("infGUI");
+            infRect.x = config.GetValue<int>("infRectX");
+            infRect.y = config.GetValue<int>("infRectY");
             if ((expListRect.x == 0) && (expListRect.y == 0))
             {
                 expListRect.x = Screen.width * 0.6f;
                 expListRect.y = 0;
+            }
+            if ((infRect.x == 0) && (infRect.y == 0))
+            {
+                infRect.x = Screen.width * 0.6f;
+                infRect.y = 0;
             }
 
             /** Register for events */
@@ -205,6 +214,9 @@ namespace ExperimentTracker
             config.SetValue("expGUI", expGUI);
             config.SetValue("expListRectX", (int)expListRect.x);
             config.SetValue("expListRectY", (int)expListRect.y);
+            config.SetValue("infGUI", infGUI);
+            config.SetValue("infRectX", (int)infRect.x);
+            config.SetValue("infRectY", (int)infRect.y);
             config.save();
 
             /** Unregister for events */
@@ -239,7 +251,8 @@ namespace ExperimentTracker
         private void toggleActive()
         {
             debugPrint("toggleAction()");
-            expGUI = !expGUI;
+            expGUI = infGUI ? false : !expGUI;
+            infGUI = false;
             etButton.SetTexture(getButtonTexture());
         }
 
