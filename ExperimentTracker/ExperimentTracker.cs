@@ -18,7 +18,8 @@ namespace ExperimentTracker
     {
         /** Used variables */
         private static ApplicationLauncherButton etButton;
-        private bool isActive;
+        private bool expGUI;
+        private bool infGUI;
         private float updateTime = 2f;
         private float timeSince = 0f;
         private Texture2D onActive;
@@ -39,7 +40,7 @@ namespace ExperimentTracker
 
         private void OnGUI()
         {
-            if (isActive)
+            if (expGUI)
             {
                 clampToScreen();
                 windowRect = GUILayout.Window(windowID, windowRect, OnWindow, Text.MODNAME);
@@ -58,7 +59,7 @@ namespace ExperimentTracker
         /** Called every frame */
         private void OnWindow(int id)
         {
-            if (isActive)
+            if (expGUI)
             {
                 if (possExperiments.Count == 0)
                 {
@@ -140,7 +141,7 @@ namespace ExperimentTracker
         {
             if (statusHasChanged() || timeIsUp())
                 statusUpdate();
-            if (possExperiments.Count > 0 && etButton != null && !isActive)
+            if (possExperiments.Count > 0 && etButton != null && !expGUI)
                 etButton.SetTexture(onReady);
             else if (etButton != null)
                 etButton.SetTexture(getButtonTexture());
@@ -170,7 +171,7 @@ namespace ExperimentTracker
             /** Config loading setup */
             PluginConfiguration config = PluginConfiguration.CreateForType<ExperimentTracker>();
             config.load();
-            isActive = config.GetValue<bool>("isActive");
+            expGUI = config.GetValue<bool>("isActive");
             windowRect.x = config.GetValue<int>("windowRectX");
             windowRect.y = config.GetValue<int>("windowRectY");
             if ((windowRect.x == 0) && (windowRect.y == 0))
@@ -201,7 +202,7 @@ namespace ExperimentTracker
 
             /** Save to config */
             PluginConfiguration config = PluginConfiguration.CreateForType<ExperimentTracker>();
-            config.SetValue("isActive", isActive);
+            config.SetValue("isActive", expGUI);
             config.SetValue("windowRectX", (int)windowRect.x);
             config.SetValue("windowRectY", (int)windowRect.y);
             config.save();
@@ -231,14 +232,14 @@ namespace ExperimentTracker
         /** Get correct button texture */
         private Texture2D getButtonTexture()
         {
-            return isActive ? onActive : onInactive;
+            return expGUI ? onActive : onInactive;
         }
 
         /** Called when button is pressed */
         private void toggleActive()
         {
             debugPrint("toggleAction()");
-            isActive = !isActive;
+            expGUI = !expGUI;
             etButton.SetTexture(getButtonTexture());
         }
 
