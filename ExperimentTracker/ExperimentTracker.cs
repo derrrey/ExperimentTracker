@@ -51,7 +51,13 @@ namespace ExperimentTracker
             if (infGUI)
             {
                 GUILayout.BeginHorizontal();
-                GUILayout.Label("Test");
+                GUILayout.BeginVertical();
+                if (GUILayout.Button("Close"))
+                    infGUI = false;
+                GUILayout.Label("Biome: " + curBiome);
+                GUILayout.Label("Situation: " + expSituation);
+                GUILayout.Label("Body: " + lastBody);
+                GUILayout.EndVertical();
                 GUILayout.EndHorizontal();
                 GUI.DragWindow();
             }
