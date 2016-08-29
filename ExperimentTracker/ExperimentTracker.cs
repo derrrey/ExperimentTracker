@@ -65,6 +65,8 @@ namespace ExperimentTracker
                 GUILayout.BeginHorizontal();
                 if (GUILayout.Button("Info"))
                     infGUI = !infGUI;
+                if (GUILayout.Button("Close"))
+                    expGUI = false;
                 if (GUILayout.Button("Close all"))
                 {
                     expGUI = false;
