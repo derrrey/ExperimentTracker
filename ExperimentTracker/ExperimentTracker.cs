@@ -130,7 +130,7 @@ namespace ExperimentTracker
         {
             if ((timeSince += Time.deltaTime) >= updateTime)
             {
-                timeSince = 0;
+                timeSince = 0f;
                 return true;
             }
             return false;
@@ -138,6 +138,7 @@ namespace ExperimentTracker
 
         private void statusUpdate()
         {
+            timeSince = 0f;
             curVessel = FlightGlobals.ActiveVessel;
             curBiome = currentBiome();
             expSituation = ScienceUtil.GetExperimentSituation(curVessel);
