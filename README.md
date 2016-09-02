@@ -1,4 +1,5 @@
 #ExperimentTracker
+Copyright 2016 derrrey
 
 Adds a little GUI to the flight scene that lists all experiments and helps to deploy them fast and easy.
 
