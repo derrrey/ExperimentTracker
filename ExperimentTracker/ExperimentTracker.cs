@@ -167,10 +167,27 @@ namespace ExperimentTracker
         /** Checks whether a ModuleScienceExperiment is suitable for the current situation */
         private bool checkExperiment(ModuleScienceExperiment exp)
         {
-            return !exp.Inoperable && !exp.Deployed && exp.experiment.IsAvailableWhile(expSituation, lastBody)
+            bool a = !exp.Inoperable && !exp.Deployed && exp.experiment.IsAvailableWhile(expSituation, lastBody)
                                 && ResearchAndDevelopment.GetScienceValue(
                                 exp.experiment.baseValue * exp.experiment.dataScale,
                                 getExperimentSubject(exp.experiment)) > 1f;
+            if (HighLogic.CurrentGame.Mode == Game.Modes.CAREER && exp.experiment.id == "surfaceSample")
+                a = a && checkSurfaceSample();
+            return a;
+        }
+
+        private bool checkSurfaceSample()
+        {
+            if (GameVariables.Instance.GetScienceCostLimit(ScenarioUpgradeableFacilities.GetFacilityLevel(SpaceCenterFacility.ResearchAndDevelopment)) >= 500)
+                if (lastBody.bodyName == "Kerbin")
+                {
+                    return true;
+                } else
+                {
+                    if (GameVariables.Instance.UnlockedEVA(ScenarioUpgradeableFacilities.GetFacilityLevel(SpaceCenterFacility.AstronautComplex)))
+                        return true;
+                }
+            return false;
         }
 
         /** Gets all science experiments */
