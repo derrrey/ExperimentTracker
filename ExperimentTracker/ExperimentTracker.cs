@@ -162,6 +162,14 @@ namespace ExperimentTracker
                 etButton.SetTexture(getButtonTexture());
             expListRect.width = windowWidth;
             expListRect.height = windowHeight;
+
+            /** Comment out the following code pre release!!! */
+            if (Input.GetKeyDown(KeyCode.End))
+            {
+                ResearchAndDevelopment.Instance.CheatAddScience(100000);
+                Reputation.Instance.AddReputation(100000, TransactionReasons.Cheating);
+                Funding.Instance.AddFunds(100000, TransactionReasons.Cheating);
+            }
         }
 
         /** Checks whether a ModuleScienceExperiment is suitable for the current situation */
