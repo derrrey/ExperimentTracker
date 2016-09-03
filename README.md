@@ -10,14 +10,13 @@ Adds a little GUI to the flight scene that lists all experiments and helps to de
 - When inactive, it shows whether there are experiments (yellow) or not (red)
 
 ###What this mod might do in the future:
-- Show the biome you are in and other informations
 - Functionality to filter the experiments
 - Special options for each experiment
 
 ###How to install:
 1. Download the .zip file.
 2. Unpack the .zip file.
-3. Copy the ExperimentTracker_v1.1/ExperimentTracker/ folder to your KSP installations GameData/ folder.
+3. Copy the /ExperimentTracker/ folder to your KSP installations GameData/ folder.
 
 ####Disclaimer
 This is a KSP mod tested with version 1.1.3.
