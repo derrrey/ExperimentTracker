@@ -20,6 +20,7 @@ namespace ExperimentTracker
         private static ApplicationLauncherButton etButton;
         private bool expGUI;
         private bool infGUI;
+        private bool finGUI;
         private float updateTime = 1f;
         private float timeSince = 0f;
         private Texture2D onActive;
@@ -29,6 +30,7 @@ namespace ExperimentTracker
         private CelestialBody lastBody;
         private List<ModuleScienceExperiment> experiments;
         private List<ModuleScienceExperiment> possExperiments;
+        private List<ModuleScienceExperiment> finishedExperiments;
         private ExperimentSituations expSituation;
         private string curBiome;
 
@@ -92,6 +94,19 @@ namespace ExperimentTracker
                 {
                     GUILayout.Label(Text.NOTHING);
                 }
+                GUILayout.Space(6);
+                if (GUILayout.Button(finGUI ? "\u2191" + "Hide finished experiments" + "\u2191" : "\u2193" + "Show finished experiments" + "\u2193"))
+                    finGUI = !finGUI;
+                if (finGUI)
+                {
+                    if (finishedExperiments.Count > 0)
+                    {
+                        GUILayout.Space(6);
+                        foreach (ModuleScienceExperiment e in finishedExperiments)
+                            if (GUILayout.Button(e.experimentActionName))
+                                e.ReviewData();
+                    }
+                }
                 GUILayout.EndVertical();
                 GUILayout.EndHorizontal();
                 GUI.DragWindow();
@@ -145,9 +160,12 @@ namespace ExperimentTracker
             lastBody = curVessel.mainBody;
             experiments = getExperiments();
             possExperiments = new List<ModuleScienceExperiment>();
+            finishedExperiments = new List<ModuleScienceExperiment>();
             if (experiments.Count() > 0)
                 foreach (ModuleScienceExperiment exp in experiments)
-                    if (checkExperiment(exp))
+                    if (exp.GetData().Length > 0)
+                        finishedExperiments.Add(exp);
+                    else if (checkExperiment(exp))
                         possExperiments.Add(exp);
         }
 
