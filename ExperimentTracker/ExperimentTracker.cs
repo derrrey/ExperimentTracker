@@ -294,7 +294,7 @@ namespace ExperimentTracker
                     {
                         debugPrint("Setting up button");
                         ApplicationLauncher instance = ApplicationLauncher.Instance;
-                        etButton = instance.AddModApplication(toggleActive, toggleActive, null, null, null, null, ApplicationLauncher.AppScenes.FLIGHT, getButtonTexture());
+                        etButton = instance.AddModApplication(toggleActive, toggleActive, null, null, null, null, ApplicationLauncher.AppScenes.FLIGHT | ApplicationLauncher.AppScenes.MAPVIEW, getButtonTexture());
                     }
                     else
                     {
