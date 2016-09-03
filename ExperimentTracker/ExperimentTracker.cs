@@ -286,15 +286,25 @@ namespace ExperimentTracker
         {
             if (ApplicationLauncher.Ready)
             {
-                if (etButton == null)
+                if (HighLogic.CurrentGame.Mode == Game.Modes.CAREER || HighLogic.CurrentGame.Mode == Game.Modes.SCIENCE_SANDBOX)
                 {
-                    debugPrint("Setting up button");
-                    ApplicationLauncher instance = ApplicationLauncher.Instance;
-                    etButton = instance.AddModApplication(toggleActive, toggleActive, null, null, null, null, ApplicationLauncher.AppScenes.FLIGHT, getButtonTexture());
+                    if (etButton == null)
+                    {
+                        debugPrint("Setting up button");
+                        ApplicationLauncher instance = ApplicationLauncher.Instance;
+                        etButton = instance.AddModApplication(toggleActive, toggleActive, null, null, null, null, ApplicationLauncher.AppScenes.FLIGHT, getButtonTexture());
+                    }
+                    else
+                    {
+                        etButton.onTrue = toggleActive;
+                        etButton.onFalse = toggleActive;
+                    }
                 } else
                 {
-                    etButton.onTrue = toggleActive;
-                    etButton.onFalse = toggleActive;
+                    if (etButton != null)
+                        ApplicationLauncher.Instance.RemoveModApplication(etButton);
+                    expGUI = false;
+                    infGUI = false;
                 }
             }
         }
