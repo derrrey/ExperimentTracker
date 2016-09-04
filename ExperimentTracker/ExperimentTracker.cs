@@ -28,9 +28,10 @@ namespace ExperimentTracker
         private Texture2D onReady;
         private Vessel curVessel;
         private CelestialBody lastBody;
-        private List<ModuleScienceExperiment> experiments;
-        private List<ModuleScienceExperiment> possExperiments;
-        private List<ModuleScienceExperiment> finishedExperiments;
+        private List<ModuleScienceExperiment> stockExperiments;
+        private List<PartModule> otherExperiments;
+        private List<PartModule> possExperiments;
+        private List<PartModule> finishedExperiments;
         private ExperimentSituations expSituation;
         private string curBiome;
 
@@ -87,8 +88,20 @@ namespace ExperimentTracker
                 if (possExperiments.Count > 0)
                 {
                     foreach (ModuleScienceExperiment e in possExperiments)
+                    {
                         if (GUILayout.Button(e.experimentActionName))
                             e.DeployExperiment();
+                    }
+                    if (otherExperiments.Count > 0)
+                    {
+                        foreach (PartModule p in otherExperiments)
+                            if (GUILayout.Button(p.name))
+                            {
+                                MethodInfo scan = p.GetType().GetMethod("startScan");
+                                if (scan != null)
+                                    scan.Invoke(p, null);
+                            }
+                    }
                 }
                 else
                 {
@@ -158,11 +171,12 @@ namespace ExperimentTracker
             curBiome = currentBiome();
             expSituation = ScienceUtil.GetExperimentSituation(curVessel);
             lastBody = curVessel.mainBody;
-            experiments = getExperiments();
-            possExperiments = new List<ModuleScienceExperiment>();
-            finishedExperiments = new List<ModuleScienceExperiment>();
-            if (experiments.Count() > 0)
-                foreach (ModuleScienceExperiment exp in experiments)
+            stockExperiments = getStockExperiments();
+            otherExperiments = getOtherExperiments();
+            possExperiments = new List<PartModule>();
+            finishedExperiments = new List<PartModule>();
+            if (stockExperiments.Count() > 0)
+                foreach (ModuleScienceExperiment exp in stockExperiments)
                     if (exp.GetData().Length > 0)
                         finishedExperiments.Add(exp);
                     else if (checkExperiment(exp))
@@ -218,8 +232,17 @@ namespace ExperimentTracker
             return false;
         }
 
+        private List<PartModule> getOtherExperiments()
+        {
+            List<PartModule> tmp = new List<PartModule>();
+            foreach (PartModule p in FlightGlobals.ActiveVessel.FindPartModulesImplementing<PartModule>())
+                if (p.name.Contains("SCANsat"))
+                    tmp.Add(p);
+            return tmp;
+        }
+
         /** Gets all science experiments */
-        private List<ModuleScienceExperiment> getExperiments()
+        private List<ModuleScienceExperiment> getStockExperiments()
         {
             return FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleScienceExperiment>();
         }
