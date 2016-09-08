@@ -70,6 +70,9 @@ namespace ExperimentTracker
         {
             if (expGUI)
             {
+                bool hasPoss = possExperiments.Count > 0;
+                bool hasFin = finishedExperiments.Count > 0;
+
                 GUILayout.BeginHorizontal();
                 if (GUILayout.Button("Info"))
                     infGUI = !infGUI;
@@ -84,7 +87,7 @@ namespace ExperimentTracker
                 GUILayout.BeginHorizontal();
                 GUILayout.BeginVertical();
                 GUILayout.Space(6);
-                if (possExperiments.Count > 0)
+                if (hasPoss)
                 {
                     foreach (ModuleScienceExperiment e in possExperiments)
                         if (GUILayout.Button(e.experimentActionName))
@@ -94,12 +97,15 @@ namespace ExperimentTracker
                 {
                     GUILayout.Label(Text.NOTHING);
                 }
-                GUILayout.Space(6);
-                if (GUILayout.Button(finGUI ? "\u2191" + "Hide finished experiments" + "\u2191" : "\u2193" + "Show finished experiments" + "\u2193"))
-                    finGUI = !finGUI;
+                if (hasFin)
+                {
+                    GUILayout.Space(6);
+                    if (GUILayout.Button(finGUI ? "\u2191" + "Hide finished experiments" + "\u2191" : "\u2193" + "Show finished experiments" + "\u2193"))
+                        finGUI = !finGUI;
+                }
                 if (finGUI)
                 {
-                    if (finishedExperiments.Count > 0)
+                    if (hasFin)
                     {
                         GUILayout.Space(6);
                         foreach (ModuleScienceExperiment e in finishedExperiments)
