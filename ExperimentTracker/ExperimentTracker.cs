@@ -104,7 +104,16 @@ namespace ExperimentTracker
                         GUILayout.Space(6);
                         foreach (ModuleScienceExperiment e in finishedExperiments)
                             if (GUILayout.Button(e.experimentActionName))
-                                e.ReviewData();
+                            {
+                                if (Event.current.button == 0)
+                                {
+                                    e.ReviewData();
+                                }
+                                else if (Event.current.button == 1)
+                                {
+                                    e.ResetExperiment();
+                                }
+                            }
                     }
                 }
                 GUILayout.EndVertical();
