@@ -86,6 +86,10 @@ namespace ExperimentTracker
                 GUILayout.EndHorizontal();
                 GUILayout.BeginHorizontal();
                 GUILayout.BeginVertical();
+                if (hasPoss)
+                    if (GUILayout.Button("Deploy all"))
+                        foreach (ModuleScienceExperiment e in possExperiments)
+                            e.DeployExperiment();
                 GUILayout.Space(6);
                 if (hasPoss)
                 {
