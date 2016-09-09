@@ -55,8 +55,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExperimentTracker.cs" />
+    <Compile Include="IETExperiment.cs" />
+    <Compile Include="OrbitalScience.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StockScience.cs" />
     <Compile Include="Text.cs" />
+    <Compile Include="UniversalStorage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
