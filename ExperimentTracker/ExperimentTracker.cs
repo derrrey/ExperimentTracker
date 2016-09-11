@@ -243,6 +243,20 @@ namespace ExperimentTracker
             return FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleScienceExperiment>();
         }
 
+        private void resetWindowPos()
+        {
+            if ((expListRect.x <= 0 || expListRect.y <= 0) || (expListRect.x >= Screen.width || expListRect.y >= Screen.height))
+            {
+                expListRect.x = Screen.width * 0.6f;
+                expListRect.y = 0;
+            }
+            if ((infRect.x <= 0 || infRect.y <= 0) || (infRect.x >= Screen.width || infRect.y >= Screen.height))
+            {
+                infRect.x = Screen.width * 0.6f;
+                infRect.y = 0;
+            }
+        }
+
         /** Called once at startup */
         public void Awake()
         {
@@ -257,16 +271,7 @@ namespace ExperimentTracker
             infGUI = config.GetValue<bool>("infGUI");
             infRect.x = config.GetValue<int>("infRectX");
             infRect.y = config.GetValue<int>("infRectY");
-            if ((expListRect.x == 0) && (expListRect.y == 0))
-            {
-                expListRect.x = Screen.width * 0.6f;
-                expListRect.y = 0;
-            }
-            if ((infRect.x == 0) && (infRect.y == 0))
-            {
-                infRect.x = Screen.width * 0.6f;
-                infRect.y = 0;
-            }
+            resetWindowPos();
 
             /** Register for events */
             GameEvents.onGUIApplicationLauncherReady.Add(setupButton);
