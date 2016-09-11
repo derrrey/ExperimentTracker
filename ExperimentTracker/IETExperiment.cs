@@ -5,8 +5,12 @@ using System.Text;
 
 namespace ExperimentTracker
 {
-    interface IETExperiment
+    public interface IETExperiment
     {
-
+        void deployExperiment(ModuleScienceExperiment exp);
+        void reviewData(ModuleScienceExperiment exp);
+        void resetExperiment(ModuleScienceExperiment exp);
+        ScienceData[] getData(ModuleScienceExperiment exp);
+        bool checkExperiment(ModuleScienceExperiment exp);
     }
 }
