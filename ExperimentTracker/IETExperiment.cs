@@ -10,7 +10,7 @@ namespace ExperimentTracker
         void deployExperiment(ModuleScienceExperiment exp);
         void reviewData(ModuleScienceExperiment exp);
         void resetExperiment(ModuleScienceExperiment exp);
-        ScienceData[] getData(ModuleScienceExperiment exp);
-        bool checkExperiment(ModuleScienceExperiment exp);
+        bool hasData(ModuleScienceExperiment exp);
+        bool checkExperiment(ModuleScienceExperiment exp, ExperimentSituations expSituation, CelestialBody lastBody, string curBiome);
     }
 }

@@ -7,7 +7,7 @@ namespace ExperimentTracker
 {
     class UniversalStorage : IETExperiment
     {
-        public bool checkExperiment(ModuleScienceExperiment exp)
+        public bool checkExperiment(ModuleScienceExperiment exp, ExperimentSituations expSituation, CelestialBody lastBody, string curBiome)
         {
             throw new NotImplementedException();
         }
@@ -17,7 +17,7 @@ namespace ExperimentTracker
             throw new NotImplementedException();
         }
 
-        public ScienceData[] getData(ModuleScienceExperiment exp)
+        public bool hasData(ModuleScienceExperiment exp)
         {
             throw new NotImplementedException();
         }
