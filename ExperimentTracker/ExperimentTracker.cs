@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using KSP.UI.Screens;
 using KSP.IO;
+using DMagic.Part_Modules;
 
 using UnityEngine;
 
@@ -28,6 +29,8 @@ namespace ExperimentTracker
         private Texture2D onReady;
         private Vessel curVessel;
         private CelestialBody lastBody;
+        IETExperiment stockScience = new StockScience();
+        IETExperiment orbitalScience = new OrbitalScience();
         private List<ModuleScienceExperiment> experiments;
         private List<ModuleScienceExperiment> possExperiments;
         private List<ModuleScienceExperiment> finishedExperiments;
@@ -89,13 +92,13 @@ namespace ExperimentTracker
                 if (hasPoss)
                     if (GUILayout.Button("Deploy all"))
                         foreach (ModuleScienceExperiment e in possExperiments)
-                            e.DeployExperiment();
+                            deploy(e);
                 GUILayout.Space(6);
                 if (hasPoss)
                 {
                     foreach (ModuleScienceExperiment e in possExperiments)
                         if (GUILayout.Button(e.experimentActionName))
-                            e.DeployExperiment();
+                            deploy(e);
                 }
                 else
                 {
@@ -117,11 +120,11 @@ namespace ExperimentTracker
                             {
                                 if (Event.current.button == 0)
                                 {
-                                    e.ReviewData();
+                                    review(e);
                                 }
                                 else if (Event.current.button == 1)
                                 {
-                                    e.ResetExperiment();
+                                    reset(e);
                                 }
                             }
                     }
@@ -144,15 +147,6 @@ namespace ExperimentTracker
             return string.Empty;
         }
 
-        /** Returns the ScienceSubject to a given ScienceExperiment */
-        private ScienceSubject getExperimentSubject(ScienceExperiment exp)
-        {
-            string biome = string.Empty;
-            if (exp.BiomeIsRelevantWhile(expSituation))
-                biome = currentBiome();
-            return ResearchAndDevelopment.GetExperimentSubject(exp, expSituation, lastBody, biome);
-        }
-
         /** Determines whether the status of the vessel has changed */
         private bool statusHasChanged()
         {
@@ -170,6 +164,30 @@ namespace ExperimentTracker
             return false;
         }
 
+        private void deploy(ModuleScienceExperiment exp)
+        {
+            if (exp.GetType() == typeof(DMModuleScienceAnimate) || exp.GetType().IsSubclassOf(typeof(DMModuleScienceAnimate)))
+                orbitalScience.deployExperiment(exp);
+            else
+                stockScience.deployExperiment(exp);
+        }
+
+        private void reset(ModuleScienceExperiment exp)
+        {
+            if (exp.GetType() == typeof(DMModuleScienceAnimate) || exp.GetType().IsSubclassOf(typeof(DMModuleScienceAnimate)))
+                orbitalScience.resetExperiment(exp);
+            else
+                stockScience.resetExperiment(exp);
+        }
+
+        private void review(ModuleScienceExperiment exp)
+        {
+            if (exp.GetType() == typeof(DMModuleScienceAnimate) || exp.GetType().IsSubclassOf(typeof(DMModuleScienceAnimate)))
+                orbitalScience.reviewData(exp);
+            else
+                stockScience.reviewData(exp);
+        }
+
         private void statusUpdate()
         {
             timeSince = 0f;
@@ -181,11 +199,28 @@ namespace ExperimentTracker
             possExperiments = new List<ModuleScienceExperiment>();
             finishedExperiments = new List<ModuleScienceExperiment>();
             if (experiments.Count() > 0)
+            {
                 foreach (ModuleScienceExperiment exp in experiments)
-                    if (exp.GetData().Length > 0)
+                {
+                    if (exp.GetType() == typeof(DMModuleScienceAnimate) || exp.GetType().IsSubclassOf(typeof(DMModuleScienceAnimate)))
+                    {
+                        if (orbitalScience.hasData(exp))
+                        {
+                            finishedExperiments.Add(exp);
+                        }
+                        else if (orbitalScience.checkExperiment(exp, expSituation, lastBody, curBiome))
+                            possExperiments.Add(exp);
+                    }
+                    else if (exp.GetScienceCount() > 0)
+                    {
                         finishedExperiments.Add(exp);
-                    else if (checkExperiment(exp))
+                    }
+                    else if (stockScience.checkExperiment(exp, expSituation, lastBody, curBiome))
+                    {
                         possExperiments.Add(exp);
+                    }
+                }
+            }
         }
 
         /** Called every frame */
@@ -209,32 +244,6 @@ namespace ExperimentTracker
                 Funding.Instance.AddFunds(100000, TransactionReasons.Cheating);
             }
             */
-        }
-
-        /** Checks whether a ModuleScienceExperiment is suitable for the current situation */
-        private bool checkExperiment(ModuleScienceExperiment exp)
-        {
-            bool a = !exp.Inoperable && !exp.Deployed && exp.experiment.IsAvailableWhile(expSituation, lastBody)
-                                && ResearchAndDevelopment.GetScienceValue(
-                                exp.experiment.baseValue * exp.experiment.dataScale,
-                                getExperimentSubject(exp.experiment)) > 1f;
-            if (HighLogic.CurrentGame.Mode == Game.Modes.CAREER && exp.experiment.id == "surfaceSample")
-                a = a && checkSurfaceSample();
-            return a;
-        }
-
-        private bool checkSurfaceSample()
-        {
-            if (GameVariables.Instance.GetScienceCostLimit(ScenarioUpgradeableFacilities.GetFacilityLevel(SpaceCenterFacility.ResearchAndDevelopment)) >= 500)
-                if (lastBody.bodyName == "Kerbin")
-                {
-                    return true;
-                } else
-                {
-                    if (GameVariables.Instance.UnlockedEVA(ScenarioUpgradeableFacilities.GetFacilityLevel(SpaceCenterFacility.AstronautComplex)))
-                        return true;
-                }
-            return false;
         }
 
         /** Gets all science experiments */
