@@ -35,6 +35,8 @@ namespace ExperimentTracker
         public void resetExperiment(ModuleScienceExperiment exp)
         {
             (exp as DMModuleScienceAnimate).ResetExperiment();
+            if ((exp as DMModuleScienceAnimate).IsDeployed)
+                (exp as DMModuleScienceAnimate).retractEvent();
         }
 
         public void reviewData(ModuleScienceExperiment exp)
