@@ -29,11 +29,11 @@ namespace ExperimentTracker
         private Texture2D onReady;
         private Vessel curVessel;
         private CelestialBody lastBody;
-        IETExperiment stockScience = new StockScience();
-        IETExperiment orbitalScience = new OrbitalScience();
         private List<ModuleScienceExperiment> experiments;
         private List<ModuleScienceExperiment> possExperiments;
         private List<ModuleScienceExperiment> finishedExperiments;
+        IETExperiment stockScience;
+        IETExperiment orbitalScience;
         private ExperimentSituations expSituation;
         private string curBiome;
 
@@ -302,6 +302,10 @@ namespace ExperimentTracker
             onActive = loadTexture("ExperimentTracker/icons/ET_active");
             onInactive = loadTexture("ExperimentTracker/icons/ET_inactive");
             onReady = loadTexture("ExperimentTracker/icons/ET_ready");
+
+            /** Initialize science experiment interfaces */
+            stockScience = new StockScience();
+            orbitalScience = new OrbitalScience();
         }
 
         /** Called on destroy */
