@@ -164,9 +164,14 @@ namespace ExperimentTracker
             return false;
         }
 
+        private bool checkType(Type type, ModuleScienceExperiment exp)
+        {
+            return (exp.GetType() == typeof(DMModuleScienceAnimate) || exp.GetType().IsSubclassOf(typeof(DMModuleScienceAnimate)));
+        }
+
         private void deploy(ModuleScienceExperiment exp)
         {
-            if (exp.GetType() == typeof(DMModuleScienceAnimate) || exp.GetType().IsSubclassOf(typeof(DMModuleScienceAnimate)))
+            if (checkType(typeof(DMModuleScienceAnimate), exp))
                 orbitalScience.deployExperiment(exp);
             else
                 stockScience.deployExperiment(exp);
@@ -174,7 +179,7 @@ namespace ExperimentTracker
 
         private void reset(ModuleScienceExperiment exp)
         {
-            if (exp.GetType() == typeof(DMModuleScienceAnimate) || exp.GetType().IsSubclassOf(typeof(DMModuleScienceAnimate)))
+            if (checkType(typeof(DMModuleScienceAnimate), exp))
                 orbitalScience.resetExperiment(exp);
             else
                 stockScience.resetExperiment(exp);
@@ -182,7 +187,7 @@ namespace ExperimentTracker
 
         private void review(ModuleScienceExperiment exp)
         {
-            if (exp.GetType() == typeof(DMModuleScienceAnimate) || exp.GetType().IsSubclassOf(typeof(DMModuleScienceAnimate)))
+            if (checkType(typeof(DMModuleScienceAnimate), exp))
                 orbitalScience.reviewData(exp);
             else
                 stockScience.reviewData(exp);
