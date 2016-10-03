@@ -166,7 +166,7 @@ namespace ExperimentTracker
 
         private bool checkType(Type type, ModuleScienceExperiment exp)
         {
-            return (exp.GetType() == typeof(DMModuleScienceAnimate) || exp.GetType().IsSubclassOf(typeof(DMModuleScienceAnimate)));
+            return (exp.GetType() == type || exp.GetType().IsSubclassOf(type));
         }
 
         private void deploy(ModuleScienceExperiment exp)
