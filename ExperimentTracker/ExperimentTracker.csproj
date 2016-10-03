@@ -34,6 +34,12 @@
       <HintPath>..\..\..\..\..\Games\steamapps\common\Kerbal Space Program Lite\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="DMagic">
+      <HintPath>API\DMagic.dll</HintPath>
+    </Reference>
+    <Reference Include="DMModuleScienceAnimateGeneric">
+      <HintPath>API\DMModuleScienceAnimateGeneric.dll</HintPath>
+    </Reference>
     <Reference Include="KSPUtil">
       <HintPath>..\..\..\..\..\Games\steamapps\common\Kerbal Space Program Lite\KSP_Data\Managed\KSPUtil.dll</HintPath>
     </Reference>
@@ -49,7 +55,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExperimentTracker.cs" />
+    <Compile Include="IETExperiment.cs" />
+    <Compile Include="OrbitalScience.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StockScience.cs" />
     <Compile Include="Text.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

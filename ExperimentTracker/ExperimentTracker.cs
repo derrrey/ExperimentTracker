@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using KSP.UI.Screens;
 using KSP.IO;
+using DMagic.Part_Modules;
 
 using UnityEngine;
 
@@ -28,6 +29,8 @@ namespace ExperimentTracker
         private Texture2D onReady;
         private Vessel curVessel;
         private CelestialBody lastBody;
+        IETExperiment stockScience = new StockScience();
+        IETExperiment orbitalScience = new OrbitalScience();
         private List<ModuleScienceExperiment> experiments;
         private List<ModuleScienceExperiment> possExperiments;
         private List<ModuleScienceExperiment> finishedExperiments;
@@ -70,6 +73,9 @@ namespace ExperimentTracker
         {
             if (expGUI)
             {
+                bool hasPoss = possExperiments.Count > 0;
+                bool hasFin = finishedExperiments.Count > 0;
+
                 GUILayout.BeginHorizontal();
                 if (GUILayout.Button("Info"))
                     infGUI = !infGUI;
@@ -83,28 +89,44 @@ namespace ExperimentTracker
                 GUILayout.EndHorizontal();
                 GUILayout.BeginHorizontal();
                 GUILayout.BeginVertical();
+                if (hasPoss)
+                    if (GUILayout.Button("Deploy all"))
+                        foreach (ModuleScienceExperiment e in possExperiments)
+                            deploy(e);
                 GUILayout.Space(6);
-                if (possExperiments.Count > 0)
+                if (hasPoss)
                 {
                     foreach (ModuleScienceExperiment e in possExperiments)
                         if (GUILayout.Button(e.experimentActionName))
-                            e.DeployExperiment();
+                            deploy(e);
                 }
                 else
                 {
                     GUILayout.Label(Text.NOTHING);
                 }
-                GUILayout.Space(6);
-                if (GUILayout.Button(finGUI ? "\u2191" + "Hide finished experiments" + "\u2191" : "\u2193" + "Show finished experiments" + "\u2193"))
-                    finGUI = !finGUI;
+                if (hasFin)
+                {
+                    GUILayout.Space(6);
+                    if (GUILayout.Button(finGUI ? "\u2191" + "Hide finished experiments" + "\u2191" : "\u2193" + "Show finished experiments" + "\u2193"))
+                        finGUI = !finGUI;
+                }
                 if (finGUI)
                 {
-                    if (finishedExperiments.Count > 0)
+                    if (hasFin)
                     {
                         GUILayout.Space(6);
                         foreach (ModuleScienceExperiment e in finishedExperiments)
                             if (GUILayout.Button(e.experimentActionName))
-                                e.ReviewData();
+                            {
+                                if (Event.current.button == 0)
+                                {
+                                    review(e);
+                                }
+                                else if (Event.current.button == 1)
+                                {
+                                    reset(e);
+                                }
+                            }
                     }
                 }
                 GUILayout.EndVertical();
@@ -125,15 +147,6 @@ namespace ExperimentTracker
             return string.Empty;
         }
 
-        /** Returns the ScienceSubject to a given ScienceExperiment */
-        private ScienceSubject getExperimentSubject(ScienceExperiment exp)
-        {
-            string biome = string.Empty;
-            if (exp.BiomeIsRelevantWhile(expSituation))
-                biome = currentBiome();
-            return ResearchAndDevelopment.GetExperimentSubject(exp, expSituation, lastBody, biome);
-        }
-
         /** Determines whether the status of the vessel has changed */
         private bool statusHasChanged()
         {
@@ -151,6 +164,35 @@ namespace ExperimentTracker
             return false;
         }
 
+        private bool checkType(Type type, ModuleScienceExperiment exp)
+        {
+            return (exp.GetType() == type || exp.GetType().IsSubclassOf(type));
+        }
+
+        private void deploy(ModuleScienceExperiment exp)
+        {
+            if (checkType(typeof(DMModuleScienceAnimate), exp))
+                orbitalScience.deployExperiment(exp);
+            else
+                stockScience.deployExperiment(exp);
+        }
+
+        private void reset(ModuleScienceExperiment exp)
+        {
+            if (checkType(typeof(DMModuleScienceAnimate), exp))
+                orbitalScience.resetExperiment(exp);
+            else
+                stockScience.resetExperiment(exp);
+        }
+
+        private void review(ModuleScienceExperiment exp)
+        {
+            if (checkType(typeof(DMModuleScienceAnimate), exp))
+                orbitalScience.reviewData(exp);
+            else
+                stockScience.reviewData(exp);
+        }
+
         private void statusUpdate()
         {
             timeSince = 0f;
@@ -162,11 +204,30 @@ namespace ExperimentTracker
             possExperiments = new List<ModuleScienceExperiment>();
             finishedExperiments = new List<ModuleScienceExperiment>();
             if (experiments.Count() > 0)
+            {
                 foreach (ModuleScienceExperiment exp in experiments)
-                    if (exp.GetData().Length > 0)
+                {
+                    if (checkType(typeof(DMModuleScienceAnimate), exp))
+                    {
+                        /** Orbital science */
+                        if (orbitalScience.hasData(exp))
+                        {
+                            finishedExperiments.Add(exp);
+                        }
+                        else if (orbitalScience.checkExperiment(exp, expSituation, lastBody, curBiome))
+                            possExperiments.Add(exp);
+                    }
+                    /** Stock science */
+                    else if (exp.GetScienceCount() > 0)
+                    {
                         finishedExperiments.Add(exp);
-                    else if (checkExperiment(exp))
+                    }
+                    else if (stockScience.checkExperiment(exp, expSituation, lastBody, curBiome))
+                    {
                         possExperiments.Add(exp);
+                    }
+                }
+            }
         }
 
         /** Called every frame */
@@ -192,36 +253,24 @@ namespace ExperimentTracker
             */
         }
 
-        /** Checks whether a ModuleScienceExperiment is suitable for the current situation */
-        private bool checkExperiment(ModuleScienceExperiment exp)
-        {
-            bool a = !exp.Inoperable && !exp.Deployed && exp.experiment.IsAvailableWhile(expSituation, lastBody)
-                                && ResearchAndDevelopment.GetScienceValue(
-                                exp.experiment.baseValue * exp.experiment.dataScale,
-                                getExperimentSubject(exp.experiment)) > 1f;
-            if (HighLogic.CurrentGame.Mode == Game.Modes.CAREER && exp.experiment.id == "surfaceSample")
-                a = a && checkSurfaceSample();
-            return a;
-        }
-
-        private bool checkSurfaceSample()
-        {
-            if (GameVariables.Instance.GetScienceCostLimit(ScenarioUpgradeableFacilities.GetFacilityLevel(SpaceCenterFacility.ResearchAndDevelopment)) >= 500)
-                if (lastBody.bodyName == "Kerbin")
-                {
-                    return true;
-                } else
-                {
-                    if (GameVariables.Instance.UnlockedEVA(ScenarioUpgradeableFacilities.GetFacilityLevel(SpaceCenterFacility.AstronautComplex)))
-                        return true;
-                }
-            return false;
-        }
-
         /** Gets all science experiments */
         private List<ModuleScienceExperiment> getExperiments()
         {
             return FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleScienceExperiment>();
+        }
+
+        private void resetWindowPos()
+        {
+            if ((expListRect.x <= 0 || expListRect.y <= 0) || (expListRect.x >= Screen.width || expListRect.y >= Screen.height))
+            {
+                expListRect.x = Screen.width * 0.6f;
+                expListRect.y = 0;
+            }
+            if ((infRect.x <= 0 || infRect.y <= 0) || (infRect.x >= Screen.width || infRect.y >= Screen.height))
+            {
+                infRect.x = Screen.width * 0.6f;
+                infRect.y = 0;
+            }
         }
 
         /** Called once at startup */
@@ -238,16 +287,7 @@ namespace ExperimentTracker
             infGUI = config.GetValue<bool>("infGUI");
             infRect.x = config.GetValue<int>("infRectX");
             infRect.y = config.GetValue<int>("infRectY");
-            if ((expListRect.x == 0) && (expListRect.y == 0))
-            {
-                expListRect.x = Screen.width * 0.6f;
-                expListRect.y = 0;
-            }
-            if ((infRect.x == 0) && (infRect.y == 0))
-            {
-                infRect.x = Screen.width * 0.6f;
-                infRect.y = 0;
-            }
+            resetWindowPos();
 
             /** Register for events */
             GameEvents.onGUIApplicationLauncherReady.Add(setupButton);
