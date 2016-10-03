@@ -207,8 +207,9 @@ namespace ExperimentTracker
             {
                 foreach (ModuleScienceExperiment exp in experiments)
                 {
-                    if (exp.GetType() == typeof(DMModuleScienceAnimate) || exp.GetType().IsSubclassOf(typeof(DMModuleScienceAnimate)))
+                    if (checkType(typeof(DMModuleScienceAnimate), exp))
                     {
+                        /** Orbital science */
                         if (orbitalScience.hasData(exp))
                         {
                             finishedExperiments.Add(exp);
@@ -216,6 +217,7 @@ namespace ExperimentTracker
                         else if (orbitalScience.checkExperiment(exp, expSituation, lastBody, curBiome))
                             possExperiments.Add(exp);
                     }
+                    /** Stock science */
                     else if (exp.GetScienceCount() > 0)
                     {
                         finishedExperiments.Add(exp);
