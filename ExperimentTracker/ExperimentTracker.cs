@@ -47,6 +47,7 @@ namespace ExperimentTracker
                 infRect = GUILayout.Window(1337, infRect, infWindow, Text.INFO);
         }
 
+        /** The info UI */
         private void infWindow(int id)
         {
             if (infGUI)
@@ -64,7 +65,7 @@ namespace ExperimentTracker
             }
         }
 
-        /** Called every frame */
+        /** The main UI */
         private void mainWindow(int id)
         {
             if (expGUI)
@@ -160,6 +161,7 @@ namespace ExperimentTracker
             return false;
         }
 
+        /** Checks type for an experiment and returns suitable IETExperiment */
         private IETExperiment checkType(ModuleScienceExperiment exp)
         {
             foreach (IETExperiment act in activators)
@@ -178,6 +180,7 @@ namespace ExperimentTracker
             return null;
         }
 
+        /** Deploys an experiment */
         private void deploy(ModuleScienceExperiment exp)
         {
             IETExperiment activator = checkType(exp);
@@ -185,6 +188,7 @@ namespace ExperimentTracker
                 activator.deployExperiment(exp);
         }
 
+        /** Resets an experiment */
         private void reset(ModuleScienceExperiment exp)
         {
             IETExperiment activator = checkType(exp);
@@ -192,6 +196,7 @@ namespace ExperimentTracker
                 activator.resetExperiment(exp);
         }
 
+        /** Opens the reviewData dialog for an experiment */
         private void review(ModuleScienceExperiment exp)
         {
             IETExperiment activator = checkType(exp);
@@ -199,6 +204,7 @@ namespace ExperimentTracker
                 activator.reviewData(exp);
         }
 
+        /** Updates experiments and other fields */
         private void statusUpdate()
         {
             timeSince = 0f;
@@ -259,6 +265,7 @@ namespace ExperimentTracker
             return FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleScienceExperiment>();
         }
 
+        /** Resets window positions if necessary */
         private void resetWindowPos()
         {
             if ((expListRect.x <= 0 || expListRect.y <= 0) || (expListRect.x >= Screen.width || expListRect.y >= Screen.height))
@@ -343,6 +350,7 @@ namespace ExperimentTracker
                     }
                     else
                     {
+                        debugPrint("Button already set up");
                         etButton.onTrue = toggleActive;
                         etButton.onFalse = toggleActive;
                     }
@@ -378,6 +386,7 @@ namespace ExperimentTracker
             return GameDatabase.Instance.GetTexture(path, false);
         }
 
+        /** Prints message to console */
         private static void debugPrint(string s)
         {
             print(Text.MODTAG + s);
