@@ -27,6 +27,11 @@ namespace ExperimentTracker
                 DMAPI.deployDMExperiment(exp as IScienceDataContainer);
         }
 
+        public Type getType()
+        {
+            return typeof(DMModuleScienceAnimate);
+        }
+
         public bool hasData(ModuleScienceExperiment exp)
         {
             return (exp as IScienceDataContainer).GetScienceCount() > 0;

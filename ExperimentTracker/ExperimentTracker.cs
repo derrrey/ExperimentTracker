@@ -32,8 +32,8 @@ namespace ExperimentTracker
         private List<ModuleScienceExperiment> experiments;
         private List<ModuleScienceExperiment> possExperiments;
         private List<ModuleScienceExperiment> finishedExperiments;
-        IETExperiment stockScience;
-        IETExperiment orbitalScience;
+        private List<IETExperiment> activators;
+        private IETExperiment stockScience;
         private ExperimentSituations expSituation;
         private string curBiome;
 
@@ -164,33 +164,43 @@ namespace ExperimentTracker
             return false;
         }
 
-        private bool checkType(Type type, ModuleScienceExperiment exp)
+        private IETExperiment checkType(ModuleScienceExperiment exp)
         {
-            return (exp.GetType() == type || exp.GetType().IsSubclassOf(type));
+            foreach (IETExperiment act in activators)
+            {
+                try
+                {
+                    if (exp.GetType() == act.getType() || exp.GetType().IsSubclassOf(act.getType()))
+                        return act;
+                }
+                catch (Exception)
+                {
+                    /** Default implementation */
+                    return stockScience;
+                }
+            }
+            return null;
         }
 
         private void deploy(ModuleScienceExperiment exp)
         {
-            if (checkType(typeof(DMModuleScienceAnimate), exp))
-                orbitalScience.deployExperiment(exp);
-            else
-                stockScience.deployExperiment(exp);
+            IETExperiment activator = checkType(exp);
+            if (activator != null)
+                activator.deployExperiment(exp);
         }
 
         private void reset(ModuleScienceExperiment exp)
         {
-            if (checkType(typeof(DMModuleScienceAnimate), exp))
-                orbitalScience.resetExperiment(exp);
-            else
-                stockScience.resetExperiment(exp);
+            IETExperiment activator = checkType(exp);
+            if (activator != null)
+                activator.resetExperiment(exp);
         }
 
         private void review(ModuleScienceExperiment exp)
         {
-            if (checkType(typeof(DMModuleScienceAnimate), exp))
-                orbitalScience.reviewData(exp);
-            else
-                stockScience.reviewData(exp);
+            IETExperiment activator = checkType(exp);
+            if (activator != null)
+                activator.reviewData(exp);
         }
 
         private void statusUpdate()
@@ -203,28 +213,22 @@ namespace ExperimentTracker
             experiments = getExperiments();
             possExperiments = new List<ModuleScienceExperiment>();
             finishedExperiments = new List<ModuleScienceExperiment>();
+            IETExperiment activator;
             if (experiments.Count() > 0)
             {
                 foreach (ModuleScienceExperiment exp in experiments)
                 {
-                    if (checkType(typeof(DMModuleScienceAnimate), exp))
+                    activator = checkType(exp);
+                    if (activator != null)
                     {
-                        /** Orbital science */
-                        if (orbitalScience.hasData(exp))
+                        if (activator.hasData(exp))
                         {
                             finishedExperiments.Add(exp);
                         }
-                        else if (orbitalScience.checkExperiment(exp, expSituation, lastBody, curBiome))
+                        else if (activator.checkExperiment(exp, expSituation, lastBody, curBiome))
+                        {
                             possExperiments.Add(exp);
-                    }
-                    /** Stock science */
-                    else if (exp.GetScienceCount() > 0)
-                    {
-                        finishedExperiments.Add(exp);
-                    }
-                    else if (stockScience.checkExperiment(exp, expSituation, lastBody, curBiome))
-                    {
-                        possExperiments.Add(exp);
+                        }
                     }
                 }
             }
@@ -303,9 +307,10 @@ namespace ExperimentTracker
             onInactive = loadTexture("ExperimentTracker/icons/ET_inactive");
             onReady = loadTexture("ExperimentTracker/icons/ET_ready");
 
-            /** Initialize science experiment interfaces */
+            /** Initialize activators and add to activators list */
+            activators = new List<IETExperiment>();
+            activators.Add(new OrbitalScience());
             stockScience = new StockScience();
-            orbitalScience = new OrbitalScience();
         }
 
         /** Called on destroy */

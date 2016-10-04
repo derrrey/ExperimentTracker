@@ -60,5 +60,10 @@ namespace ExperimentTracker
         {
             exp.ReviewData();
         }
+
+        public Type getType()
+        {
+            return typeof(ModuleScienceExperiment);
+        }
     }
 }

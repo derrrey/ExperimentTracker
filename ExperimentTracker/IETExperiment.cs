@@ -12,5 +12,6 @@ namespace ExperimentTracker
         void resetExperiment(ModuleScienceExperiment exp);
         bool hasData(ModuleScienceExperiment exp);
         bool checkExperiment(ModuleScienceExperiment exp, ExperimentSituations expSituation, CelestialBody lastBody, string curBiome);
+        Type getType();
     }
 }
