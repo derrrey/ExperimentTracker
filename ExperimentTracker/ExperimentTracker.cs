@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections;
-using System.Reflection;
 using System.Linq;
-using System.Text;
 using KSP.UI.Screens;
 using KSP.IO;
-using DMagic.Part_Modules;
 
 using UnityEngine;
 
