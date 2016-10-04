@@ -173,8 +173,7 @@ namespace ExperimentTracker
                 }
                 catch (Exception)
                 {
-                    /** Default implementation */
-                    return stockScience;
+                    continue;
                 }
             }
             return null;
@@ -313,7 +312,7 @@ namespace ExperimentTracker
             /** Initialize activators and add to activators list */
             activators = new List<IETExperiment>();
             activators.Add(new OrbitalScience());
-            stockScience = new StockScience();
+            activators.Add(new StockScience());
         }
 
         /** Called on destroy */
