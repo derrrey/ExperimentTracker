@@ -17,7 +17,7 @@ namespace ExperimentTracker
         private static ApplicationLauncherButton etButton;
         private bool expGUI;
         private bool infGUI;
-        private bool finGUI;
+        private bool showFin;
         private float updateTime = 1f;
         private float timeSince = 0f;
         private Texture2D onActive;
@@ -104,26 +104,25 @@ namespace ExperimentTracker
                 if (hasFin)
                 {
                     GUILayout.Space(6);
-                    if (GUILayout.Button(finGUI ? "\u2191" + "Hide finished experiments" + "\u2191" : "\u2193" + "Show finished experiments" + "\u2193"))
-                        finGUI = !finGUI;
+                    if (GUILayout.Button(showFin ? "\u2191" + "Hide finished experiments" + "\u2191" : "\u2193" + "Show finished experiments" + "\u2193"))
+                        showFin = !showFin;
                 }
-                if (finGUI)
+                if (showFin && hasFin)
                 {
-                    if (hasFin)
+                    GUILayout.Space(6);
+                    foreach (ModuleScienceExperiment e in finishedExperiments)
                     {
-                        GUILayout.Space(6);
-                        foreach (ModuleScienceExperiment e in finishedExperiments)
-                            if (GUILayout.Button(e.experimentActionName))
+                        if (GUILayout.Button(e.experimentActionName))
+                        {
+                            if (Event.current.button == 0)
                             {
-                                if (Event.current.button == 0)
-                                {
-                                    review(e);
-                                }
-                                else if (Event.current.button == 1)
-                                {
-                                    reset(e);
-                                }
+                                review(e);
                             }
+                            else if (Event.current.button == 1)
+                            {
+                                reset(e);
+                            }
+                        }
                     }
                 }
                 GUILayout.EndVertical();
@@ -312,7 +311,7 @@ namespace ExperimentTracker
             /** Initialize activators and add to activators list */
             activators = new List<IETExperiment>();
             activators.Add(new OrbitalScience());
-            activators.Add(new StockScience());
+            activators.Add(new StockScience()); // This MUST be the last one
         }
 
         /** Called on destroy */
@@ -339,12 +338,12 @@ namespace ExperimentTracker
         {
             if (ApplicationLauncher.Ready)
             {
+                ApplicationLauncher instance = ApplicationLauncher.Instance;
                 if (HighLogic.CurrentGame.Mode == Game.Modes.CAREER || HighLogic.CurrentGame.Mode == Game.Modes.SCIENCE_SANDBOX)
                 {
                     if (etButton == null)
                     {
                         debugPrint("Setting up button");
-                        ApplicationLauncher instance = ApplicationLauncher.Instance;
                         etButton = instance.AddModApplication(toggleActive, toggleActive, null, null, null, null, ApplicationLauncher.AppScenes.FLIGHT | ApplicationLauncher.AppScenes.MAPVIEW, getButtonTexture());
                     }
                     else
@@ -355,10 +354,10 @@ namespace ExperimentTracker
                     }
                 } else
                 {
+                    debugPrint("Removing button");
                     if (etButton != null)
-                        ApplicationLauncher.Instance.RemoveModApplication(etButton);
-                    expGUI = false;
-                    infGUI = false;
+                        instance.RemoveModApplication(etButton);
+                    Destroy(this);
                 }
             }
         }
