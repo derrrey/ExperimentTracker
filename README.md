@@ -18,7 +18,3 @@ Adds a little GUI to the flight scene that lists all experiments and helps to de
 1. Download the .zip file.
 2. Unpack the .zip file.
 3. Copy the /ExperimentTracker/ folder to your KSP installations GameData/ folder.
-
-####Disclaimer
-This is a KSP mod tested with version 1.1.3.
-Any other versions of the game are not supported officially.
