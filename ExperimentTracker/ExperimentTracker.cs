@@ -15,6 +15,7 @@ namespace ExperimentTracker
     {
         /** Used variables */
         private static ApplicationLauncherButton etButton;
+        private bool hideUI = false;
         private bool expGUI;
         private bool infGUI;
         private bool showFin;
@@ -41,10 +42,13 @@ namespace ExperimentTracker
 
         private void OnGUI()
         {
-            if (expGUI)
-                expListRect = GUILayout.Window(42, expListRect, mainWindow, Text.MODNAME);
-            if (infGUI)
-                infRect = GUILayout.Window(1337, infRect, infWindow, Text.INFO);
+            if (!hideUI)
+            {
+                if (expGUI)
+                    expListRect = GUILayout.Window(42, expListRect, mainWindow, Text.MODNAME);
+                if (infGUI)
+                    infRect = GUILayout.Window(1337, infRect, infWindow, Text.INFO);
+            }
         }
 
         /** The info UI */
@@ -296,6 +300,8 @@ namespace ExperimentTracker
 
             /** Register for events */
             GameEvents.onGUIApplicationLauncherReady.Add(setupButton);
+            GameEvents.onHideUI.Add(onHideUI);
+            GameEvents.onShowUI.Add(onShowUI);
         }
 
         /** Called after Awake */
@@ -375,6 +381,20 @@ namespace ExperimentTracker
             expGUI = infGUI ? false : !expGUI;
             infGUI = false;
             etButton.SetTexture(getButtonTexture());
+        }
+
+        /** Called when F2 is pressed and UI has been hided before.
+         * onHideUI has been called before.
+         */
+        public void onShowUI()
+        {
+            hideUI = false;
+        }
+
+        /** Called when F2 is pressed and UI has been shown before */
+        public void onHideUI()
+        {
+            hideUI = true;
         }
 
         /** Load and return a texture */
