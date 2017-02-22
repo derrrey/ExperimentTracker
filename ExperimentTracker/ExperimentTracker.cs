@@ -337,6 +337,10 @@ namespace ExperimentTracker
 
             /** Unregister for events */
             GameEvents.onGUIApplicationLauncherReady.Remove(setupButton);
+
+            /** Remove button */
+            if (etButton != null)
+                ApplicationLauncher.Instance.RemoveModApplication(etButton);
         }
 
         /** Set up for the toolbar-button */
