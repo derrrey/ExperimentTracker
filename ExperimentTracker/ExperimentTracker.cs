@@ -30,7 +30,6 @@ namespace ExperimentTracker
     private List<ModuleScienceExperiment> possExperiments;
     private List<ModuleScienceExperiment> finishedExperiments;
     private List<IETExperiment> activators;
-    private IETExperiment stockScience;
     private ExperimentSituations expSituation;
     private string curBiome;
 

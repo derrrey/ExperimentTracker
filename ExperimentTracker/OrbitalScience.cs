@@ -9,7 +9,7 @@ namespace ExperimentTracker
     public bool checkExperiment(ModuleScienceExperiment exp, ExperimentSituations expSituation, CelestialBody lastBody, string curBiome)
     {
       ScienceExperiment sciexp = ResearchAndDevelopment.GetExperiment(exp.experimentID);
-      ScienceSubject sub = ResearchAndDevelopment.GetExperimentSubject(sciexp, expSituation, lastBody, curBiome);
+      ScienceSubject sub = ResearchAndDevelopment.GetExperimentSubject(sciexp, expSituation, lastBody, curBiome, curBiome);
       float dmscival = ResearchAndDevelopment.GetScienceValue(sciexp.dataScale * sciexp.baseValue, sub);
 
       float dmexpds = sciexp.dataScale;

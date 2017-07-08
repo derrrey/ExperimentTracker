@@ -32,10 +32,7 @@ namespace ExperimentTracker
 
     private ScienceSubject getExperimentSubject(ScienceExperiment exp, ExperimentSituations expSituation, CelestialBody lastBody, string curBiome)
     {
-      string biome = string.Empty;
-      if (exp.BiomeIsRelevantWhile(expSituation))
-        biome = curBiome;
-      return ResearchAndDevelopment.GetExperimentSubject(exp, expSituation, lastBody, biome);
+      return ResearchAndDevelopment.GetExperimentSubject(exp, expSituation, lastBody, curBiome, curBiome);
     }
 
     public void deployExperiment(ModuleScienceExperiment exp)
